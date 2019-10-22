@@ -57,6 +57,9 @@ public class MainScript : MonoBehaviour
         ParticleShader.SetTexture(4, "NewFrame", mainTexture);
         ParticleShader.SetTexture(4, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.SetTexture(5, "NewFrame", mainTexturePrevFrame);
+        ParticleShader.SetTexture(5, "FrameBefore", mainTexture);
+        ParticleShader.SetTexture(6, "NewFrame", mainTexture);
+        ParticleShader.SetTexture(6, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
         ParticleShader.Dispatch(5, 1, 1, 1);
         ShadowShader.SetTexture(0, "Frame", mainTexture);
@@ -64,7 +67,6 @@ public class MainScript : MonoBehaviour
         ShadowShader.SetTexture(1, "Frame", mainTexture);
         ShadowShader.SetTexture(1, "Result", shadowTexture);
         ShadowShader.Dispatch(1, 1, 1, 1);
-        GL.Flush();
     }
     
     void Update()
@@ -73,6 +75,7 @@ public class MainScript : MonoBehaviour
         while (timeSinceLastPhysics > 0.1f)
         {
             timeSinceLastPhysics -= 0.1f;
+            ParticleShader.SetFloat("Time", Time.realtimeSinceStartup);
             ParticleShader.SetTexture(1, "NewFrame", mainTexture);
             ParticleShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
             ParticleShader.SetTexture(2, "NewFrame", mainTexture);
@@ -81,17 +84,19 @@ public class MainScript : MonoBehaviour
             ParticleShader.SetTexture(3, "FrameBefore", mainTexturePrevFrame);
             ParticleShader.SetTexture(4, "NewFrame", mainTexture);
             ParticleShader.SetTexture(4, "FrameBefore", mainTexturePrevFrame);
+            ParticleShader.SetTexture(6, "NewFrame", mainTexture);
+            ParticleShader.SetTexture(6, "FrameBefore", mainTexturePrevFrame);
             ParticleShader.Dispatch(1, mainTexture.width / 256, 1, 1);
             ParticleShader.Dispatch(2, 1, mainTexture.height / 256, 1);
             ParticleShader.Dispatch(3, 1, mainTexture.height / 256, 1);
             ParticleShader.Dispatch(4, mainTexture.width / 256, 1, 1);
+            ParticleShader.Dispatch(6, mainTexture.width / 16, mainTexture.height / 16, 1);
             SwitchTextures();
         }
 
         ShadowShader.SetFloat("Time", Time.realtimeSinceStartup);
-        ShadowShader.SetTexture(0, "Frame", mainTexture);
+        ShadowShader.SetTexture(0, "Frame", mainTexturePrevFrame);
         ShadowShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
-        GL.Flush();
     }
 
     private void SwitchTextures()

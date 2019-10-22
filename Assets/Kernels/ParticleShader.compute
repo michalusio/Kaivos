@@ -4,6 +4,7 @@
 RWTexture2D<float4> FrameBefore;
 RWTexture2D<float4> NewFrame;
 int seed;
+float Time;
 
 static const int3 eee = int3(1, 0, -1);
 
@@ -276,6 +277,101 @@ void PlaceShop(uint3 id : SV_DispatchThreadID)
 			case 6:
 				NewFrame[id.xy + int2(508, 999)] = BEDROCK;
 				break;
+		}
+	}
+}
+
+#pragma kernel Treenemy
+[numthreads(16, 16, 1)]
+void Treenemy(uint3 id : SV_DispatchThreadID)
+{
+	int2 coords = id.xy;
+	int2 coordsAbove = id.xy + eee.yx;
+	int2 coordsBelow = id.xy + eee.yz;
+	int2 coordsLeft = id.xy + eee.zy;
+	int2 coordsRight = id.xy + eee.xy;
+	float4 tile = NewFrame[coords];
+	float4 tileAbove = NewFrame[coordsAbove];
+	float4 tileBelow = NewFrame[coordsBelow];
+	float4 tileLeft = NewFrame[coordsLeft];
+	float4 tileRight = NewFrame[coordsRight];
+	if (IS_TREENEMY_BRANCH(tile))
+	{
+		if (IS_LIQUID(tileAbove))
+		{
+			NewFrame[coordsAbove] = TREENEMY_BRANCH_ASLEEP;
+		}
+		if (IS_LIQUID(tileBelow))
+		{
+			NewFrame[coordsBelow] = TREENEMY_BRANCH_ASLEEP;
+		}
+		if (IS_LIQUID(tileLeft))
+		{
+			NewFrame[coordsLeft] = TREENEMY_BRANCH_ASLEEP;
+		}
+		if (IS_LIQUID(tileRight))
+		{
+			NewFrame[coordsRight] = TREENEMY_BRANCH_ASLEEP;
+		}
+		if (tile.y > 0.15)
+		{
+			tile.y -= 0.1;
+			NewFrame[coords] = tile;
+		}
+		if (tile.y < 0.15 && (
+			IS_TREENEMY_TRIGGER(tileAbove) ||
+			IS_TREENEMY_TRIGGER(tileBelow) ||
+			IS_TREENEMY_TRIGGER(tileLeft) ||
+			IS_TREENEMY_TRIGGER(tileRight)))
+		{
+			tile.y = 1.0;
+			NewFrame[coords] = tile;
+			if (snoise(float3(id.xy, Time)) > 0.75)
+			{
+				if (!IS_EMPTY(tileAbove) && !IS_TREENEMY_CORE(tileAbove))
+				{
+					NewFrame[coordsAbove] = TREENEMY_BRANCH_ASLEEP;
+				}
+				if (!IS_EMPTY(tileBelow) && !IS_TREENEMY_CORE(tileBelow))
+				{
+					NewFrame[coordsBelow] = TREENEMY_BRANCH_ASLEEP;
+				}
+				if (!IS_EMPTY(tileLeft) && !IS_TREENEMY_CORE(tileLeft))
+				{
+					NewFrame[coordsLeft] = TREENEMY_BRANCH_ASLEEP;
+				}
+				if (!IS_EMPTY(tileRight) && !IS_TREENEMY_CORE(tileRight))
+				{
+					NewFrame[coordsRight] = TREENEMY_BRANCH_ASLEEP;
+				}
+			}
+			
+		}
+	}
+	else if (IS_TREENEMY_CORE(tile))
+	{
+		float timeToSignal = tile.y - 0.1;
+		if (timeToSignal >= -0.05)
+		{
+			if (timeToSignal < 0.05)
+			{
+				tile.y = 1.0;
+				NewFrame[coords] = tile;
+			}
+			else
+			{
+				tile.y -= 0.1;
+				NewFrame[coords] = tile;
+			}
+		}
+		else if (
+			IS_TREENEMY_TRIGGER(tileAbove) ||
+			IS_TREENEMY_TRIGGER(tileBelow) ||
+			IS_TREENEMY_TRIGGER(tileLeft) ||
+			IS_TREENEMY_TRIGGER(tileRight))
+		{
+			tile.y = 0.1;
+			NewFrame[coords] = tile;
 		}
 	}
 }

@@ -28,8 +28,6 @@
 #define COAL_POS float2(0, 20)
 #define GOLD_POS float2(0, 80)
 
-
-
 #define BELT_LEFT float4(0, 0.6, 0.6, 1.0)
 #define BELT_RIGHT float4(0.1, 0.6, 0.6, 1.0)
 #define BELT_UP float4(0.2, 0.6, 0.6, 1.0)
@@ -42,12 +40,22 @@
 #define WATER_POS float2(0, 104)
 #define LAVA_POS float2(0, 100)
 
+#define TREENEMY_CORE_ASLEEP float4(0.0, 0.0, 0.8, 1.0)
+#define TREENEMY_CORE_WOKEN float4(0.0, 0.1, 0.8, 1.0)
+#define TREENEMY_BRANCH_ASLEEP float4(0.1, 0.0, 0.8, 1.0)
+#define TREENEMY_BRANCH_ALERT float4(0.1, 0.1, 0.8, 1.0)
+#define TREENEMY_CORE_POS float2(0, 124)
+#define TREENEMY_BRANCH_POS float2(0, 128)
 
 #define SHOP_POS_START float2(0, 0)
 
 #define IS_EQUAL(x, y) all(abs(x - y)<0.01)
 #define IS_EMPTY(x) (x.a < 0.5)
 
+#define IS_TREENEMY_CORE(u) IS_EQUAL(u.xzw, float3(0.0, 0.8, 1.0))
+#define IS_TREENEMY_BRANCH(u) IS_EQUAL(u.xzw, float3(0.1, 0.8, 1.0))
+#define IS_TREENEMY_TRIGGER(u) (abs(u.y - 1.0) < 0.01)
+#define IS_TREENEMY(u) IS_EQUAL(u.zw, float2(0.8, 1.0))
 #define IS_SHOP(x) IS_EQUAL(x.yzw, float3(0.1, 0.1, 1.0))
 #define IS_LIGHTED(x) IS_SHOP(x)
 #define IS_GLOWING(x) IS_EQUAL(x, LAVA)

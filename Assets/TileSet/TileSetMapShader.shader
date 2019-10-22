@@ -62,6 +62,7 @@
             {
                 float4 col = tex2D(_MainTex, i.uv);
 				float4 shadow = tex2D(_ShadowTex, i.uv);
+				
 				float2 pos = float2(0, 0);
 				bool wasMined = false;
 				if (IS_MINED(col))
@@ -134,7 +135,14 @@
 					pos = SHOP_POS_START + decodeShop(col);
 					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y))/_Sizes2.xy);
 					return col * shadow;
-					
+				}
+				else if (IS_TREENEMY_CORE(col))
+				{
+					pos = TREENEMY_CORE_POS;
+				}
+				else if (IS_TREENEMY_BRANCH(col))
+				{
+					pos = TREENEMY_BRANCH_POS;
 				}
 				else return col * shadow;
 				
@@ -173,9 +181,9 @@
 					}
 				}
 				
+				float2 position = trunc(i.uv * _Sizes.xy);
 				if (IS_ANIMATED(col))
 				{
-					float2 position = trunc(i.uv * _Sizes.xy);
 					float noise = trunc(_Time.z * 5) * 4;
 					
 					if (!IS_BELT(col))
@@ -184,9 +192,14 @@
 					}
 					col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
 				}
+				else if (IS_TREENEMY(col))
+				{
+					float ratio = col.y;
+					col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					col.b *= ratio;
+				}
 				else
 				{
-					float2 position = trunc(i.uv * _Sizes.xy);
 					float noise = trunc((snoise(position) + 1) * 4) * 4;
 					col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
 				}
