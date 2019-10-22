@@ -1,0 +1,26 @@
+﻿#include "..\blockList.cginc"
+
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+int2 Position;
+uint2 Size;
+
+[numthreads(1, 1, 1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	Result.GetDimensions(w, h);
+	
+	float2 halfCorrection = Size / int2(2, 2);
+	float2 coords = id.xy + int2(Position.x, h - 1 - Position.y) - halfCorrection;
+	float4 col = Result[coords];
+	if (!IS_SHOP(col) && !IS_EQUAL(col, BEDROCK))
+	{
+		if (IS_MINEABLE(col))
+		{
+			Result[coords] = float4(col.x, 0.5, 0.5, 1.0);
+		}
+		else Result[coords] = float4(0, 0, 0, 0);
+	}
+}

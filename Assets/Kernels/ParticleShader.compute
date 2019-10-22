@@ -1,0 +1,281 @@
+﻿#include "..\noiseSimplex.cginc"
+#include "..\blockList.cginc"
+
+RWTexture2D<float4> FrameBefore;
+RWTexture2D<float4> NewFrame;
+int seed;
+
+static const int3 eee = int3(1, 0, -1);
+
+float seedNoise(float2 pos)
+{
+	return snoise(pos + seed);
+}
+
+float seedNoise(float3 pos)
+{
+	return snoise(pos + seed);
+}
+
+#pragma kernel GenerateTerrain
+[numthreads(16, 16, 1)]
+void GenerateTerrain(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	float rockGrayNoise = seedNoise(id.xy/50.0);
+	float rockBrownNoise = seedNoise(id.xy/50.0+20);
+	NewFrame[id.xy] = float4(0, 0, 0, 0);
+	if ((int)id.y < h - 32.0)
+	{
+		if (rockGrayNoise * rockBrownNoise < 0.5)
+		{
+			NewFrame[id.xy] = lerp(ROCK1, ROCK2, step(rockGrayNoise, rockBrownNoise));
+			if (rockGrayNoise * rockBrownNoise < 0.4)
+			{
+				float heightPart = (h - id.y)/(float)h;
+				
+				float ironNoise = max(0, seedNoise(id.xy/ORE_SIZE+40)) * (1-(heightPart-MAPGEN_IRON_H)*(heightPart-MAPGEN_IRON_H));
+				float coalNoise = max(0, seedNoise(id.xy/ORE_SIZE+60)) * (1-(heightPart-MAPGEN_COAL_H)*(heightPart-MAPGEN_COAL_H));
+				float copperNoise = max(0, seedNoise(id.xy/ORE_SIZE+80)) * (1-(heightPart-MAPGEN_COPPER_H)*(heightPart-MAPGEN_COPPER_H));
+				float goldNoise = max(0, 0.8 * seedNoise(id.xy/ORE_SIZE+100)) * (1-(heightPart-MAPGEN_GOLD_H)*(heightPart-MAPGEN_GOLD_H));
+				float maxNoise = max(max(max(ironNoise,coalNoise),copperNoise),goldNoise);
+				if (maxNoise > 0.7)
+				{
+					if (ironNoise == maxNoise)
+					{
+						NewFrame[id.xy] = IRON;
+					}
+					else if (coalNoise == maxNoise)
+					{
+						NewFrame[id.xy] = COAL;
+					}
+					else if (copperNoise == maxNoise)
+					{
+						NewFrame[id.xy] = COPPER;
+					}
+					else if (goldNoise == maxNoise)
+					{
+						NewFrame[id.xy] = GOLD;
+					}
+				}
+			}
+		}
+		else if (id.y < h / 2)
+		{
+			NewFrame[id.xy] = LAVA;
+		}
+		else
+		{
+			NewFrame[id.xy] = WATER;
+		}
+	}
+	
+	float dirtNoise = (seedNoise(float2(id.x / 50.0 + 80, 0.5)) + 1) * 5 + h - 38.0;
+	if (abs(id.y - dirtNoise) < 5)
+	{
+		NewFrame[id.xy] = DIRT;
+	}
+	if (abs(id.y - dirtNoise - 5) < 0.5)
+	{
+		NewFrame[id.xy] = GRASS;
+	}
+	if (id.y == 0)
+	{
+		NewFrame[id.xy] = BEDROCK;
+	}
+}
+
+#pragma kernel Particles
+[numthreads(256, 1, 1)]
+void Particles(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	for(uint i = 0; i < h; i++)
+	{
+		int2 coords = int2(id.x, i);
+		int2 coordsAbove = coords + eee.yx;
+		NewFrame[coords] = FrameBefore[coords];
+		if (IS_EMPTY(FrameBefore[coords]))
+		{
+			float4 col = FrameBefore[coordsAbove];
+			if (IS_MOVABLE(col))
+			{
+				int2 coordsLeft = coordsAbove + eee.xy;
+				int2 coordsRight = coordsAbove + eee.zy;
+				if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP)) continue;
+				NewFrame[coords] = FrameBefore[coordsAbove];
+				FrameBefore[coordsAbove] = 0;
+			}
+		}
+	}
+}
+
+#pragma kernel RightToLeft
+[numthreads(1, 256, 1)]
+void RightToLeft(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	for(int i = (int)w - 1; i > 0; i--)
+	{
+		int2 coords = int2(i, id.y);
+		int2 coordsAbove = coords + eee.yx;
+		int2 coordsAboveLeft = coords + eee.zx;
+		if (IS_EQUAL(NewFrame[coords], BELT_LEFT))
+		{
+			if (IS_EMPTY(NewFrame[coordsAboveLeft]) && IS_MOVABLE(NewFrame[coordsAbove]))
+			{
+				NewFrame[coordsAboveLeft] = NewFrame[coordsAbove];
+				NewFrame[coordsAbove] = 0;
+				i--;
+			}
+		}
+		else
+		{
+			int2 coordsLeft = coords + eee.xy;
+			int2 coordsRight = coords + eee.zy;
+			if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP)) continue;
+			if (IS_MOVABLE(NewFrame[coords]) && IS_EMPTY(NewFrame[coords+eee.xz]) && coords.y + eee.z >=0)
+			{
+				NewFrame[coords+eee.xz] = NewFrame[coords];
+				NewFrame[coords] = 0;
+			}
+			else if (IS_LIQUID(NewFrame[coords]) && IS_EMPTY(NewFrame[coords+eee.xy]) && (uint)(coords.x + eee.x) < w)
+			{
+				NewFrame[coords+eee.xy] = NewFrame[coords];
+				NewFrame[coords] = 0;
+			}
+		}
+	}
+}
+
+#pragma kernel LeftToRight
+[numthreads(1, 256, 1)]
+void LeftToRight(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	int wLess = (int)w - 1;
+	for(int i = 0; i < wLess; i++)
+	{
+		int2 coords = int2(i, id.y);
+		int2 coordsAbove = coords + eee.yx;
+		int2 coordsAboveRight = coords + eee.xx;
+		if (IS_EQUAL(NewFrame[coords], BELT_RIGHT))
+		{
+			if (IS_EMPTY(NewFrame[coordsAboveRight]) && IS_MOVABLE(NewFrame[coordsAbove]))
+			{
+				NewFrame[coordsAboveRight] = NewFrame[coordsAbove];
+				NewFrame[coordsAbove] = 0;
+				i++;
+			}
+		}
+		else
+		{
+			int2 coordsLeft = coords + eee.xy;
+			int2 coordsRight = coords + eee.zy;
+			if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP)) continue;
+			if (IS_MOVABLE(NewFrame[coords]) && IS_EMPTY(NewFrame[coords+eee.zz]) && coords.y + eee.z >= 0)
+			{
+				NewFrame[coords+eee.zz] = NewFrame[coords];
+				NewFrame[coords] = 0;
+			}
+			else if (IS_LIQUID(NewFrame[coords]) && IS_EMPTY(NewFrame[coords+eee.zy]) && coords.x + eee.z >= 0)
+			{
+				NewFrame[coords+eee.zy] = NewFrame[coords];
+				NewFrame[coords] = 0;
+			}
+		}
+	}
+}
+
+#pragma kernel DownToUp
+[numthreads(256, 1, 1)]
+void DownToUp(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	for(uint i = 0; i < h; i++)
+	{
+		int2 coords = int2(id.x, i);
+		int2 coordsAbove = coords + eee.yx;
+		int2 coordsLeft = coords + eee.xy;
+		int2 coordsRight = coords + eee.zy;
+		int2 coordsTwoAbove = coordsAbove + eee.yx;
+		if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP))
+		{
+			if (IS_MOVABLE(NewFrame[coords]))
+			{
+				if (IS_BELT(NewFrame[coordsAbove]) && IS_EMPTY(NewFrame[coordsTwoAbove]))
+				{
+					NewFrame[coordsTwoAbove] = NewFrame[coords];
+					NewFrame[coords] = 0;
+				}
+				else if (IS_EMPTY(NewFrame[coordsAbove]))
+				{
+					NewFrame[coordsAbove] = NewFrame[coords];
+					NewFrame[coords] = 0;
+					i++;
+				}
+			}
+		}
+	}
+}
+
+#pragma kernel PlaceShop
+[numthreads(8, 8, 1)]
+void PlaceShop(uint3 id : SV_DispatchThreadID)
+{
+	float number = id.x * 8 + id.y;
+	float4 x = float4(number/64.0, 0.1, 0.1, 1.0);
+	NewFrame[id.xy + int2(508, 1000)] = x;
+	if (id.y == 0)
+	{
+		int i;
+		switch(id.x)
+		{
+			case 0:
+				for(i=0;i<20;i++)
+				{
+					int2 coords = id.xy+int2(507, 999-i);
+					if (IS_EMPTY(NewFrame[coords]))
+					{
+						NewFrame[coords] = LADDER;
+					}
+					else break;
+				}
+				NewFrame[id.xy + int2(508, 999)] = BEDROCK;
+				break;
+			case 3:
+			case 4:
+				for(i=0;i<20;i++)
+				{
+					int2 coords = id.xy+int2(508, 999-i);
+					if (IS_EMPTY(NewFrame[coords]))
+					{
+						NewFrame[coords] = BELT_UP;
+					}
+					else break;
+				}
+				break;
+			case 7:
+				for(i=0;i<20;i++)
+				{
+					int2 coords = id.xy+int2(509, 999-i);
+					if (IS_EMPTY(NewFrame[coords]))
+					{
+						NewFrame[coords] = LADDER;
+					}
+					else break;
+				}
+				NewFrame[id.xy + int2(508, 999)] = BEDROCK;
+				break;
+			case 1:
+			case 6:
+				NewFrame[id.xy + int2(508, 999)] = BEDROCK;
+				break;
+		}
+	}
+}

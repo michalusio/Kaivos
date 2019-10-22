@@ -1,0 +1,62 @@
+﻿#include "..\noiseSimplex.cginc"
+#include "..\blockList.cginc"
+#define LIGHT(x) (x.a > 0.5)
+
+RWTexture2D<float4> Frame;
+RWTexture2D<float4> Result;
+float Time;
+
+#pragma kernel ShadowMap
+[numthreads(16, 16, 1)]
+void ShadowMap(uint3 id : SV_DispatchThreadID)
+{
+	int3 e = int3(1, 0, -1);
+	if (IS_GLOWING(Frame[id.xy]))
+	{
+		float noise = (2 + snoise(float3(id.xy * 0.05, Time / 5))) / 3;
+		float3 glowColor = float3(1, 0.078, 0.154) * trunc(noise * 8) / 8;
+		Result[id.xy] = max(Result[id.xy], float4(glowColor, 1.0));
+	}
+	if (
+		IS_LIGHTED(Frame[id.xy]) ||
+		(LIGHT(Result[id.xy + e.xy]) && IS_EMPTY(Frame[id.xy + e.xy])) ||
+		(LIGHT(Result[id.xy + e.zy]) && IS_EMPTY(Frame[id.xy + e.zy])) ||
+		(LIGHT(Result[id.xy + e.yx]) && IS_EMPTY(Frame[id.xy + e.yx])) ||
+		(LIGHT(Result[id.xy + e.yz]) && IS_EMPTY(Frame[id.xy + e.yz]))
+		)
+	{
+		Result[id.xy] = float4(1.0, 1.0, 1.0, 1.0);
+	}
+	else
+	{
+		float3 color =
+			max(
+			max(
+			max(
+			max(
+			max(
+			max(
+			max(
+			Result[id.xy + e.xy],
+			Result[id.xy + e.zy]),
+			Result[id.xy + e.yx]),
+			Result[id.xy + e.yz]),
+			Result[id.xy + e.xx] / SQRT2),
+			Result[id.xy + e.xz] / SQRT2),
+			Result[id.xy + e.zx] / SQRT2),
+			Result[id.xy + e.zz] / SQRT2).rgb;
+		float maxDiff = max(max(abs(color.r - color.g), abs(color.r - color.b)), abs(color.g - color.b));
+		color *= (0.75 + 0.2 * maxDiff);
+		
+		Result[id.xy] = float4(color, 1.0);
+	}
+}
+
+#pragma kernel StartShadowMap
+[numthreads(16, 16, 1)]
+void StartShadowMap(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	Result.GetDimensions(w, h);
+    Result[int2(id.x + w/2 - 8, h - id.y)] = float4(1.0, 1.0, 1.0, 1.0);
+}

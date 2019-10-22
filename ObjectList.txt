@@ -1,0 +1,20 @@
+Basic:
+	Grass
+	Dirt
+	Gray Stone
+	Brown Stone
+
+Ores:
+	Iron
+	Coal
+	Copper
+	Gold
+
+Mechanical:
+	Left Belt
+	Right Belt
+	Up Belt
+
+Liquids:
+	Water
+	Lava

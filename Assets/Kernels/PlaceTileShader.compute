@@ -1,0 +1,40 @@
+﻿#include "..\blockList.cginc"
+
+#pragma kernel CSMain
+
+int TileToPlace;
+int2 WhereToPlace;
+RWBuffer<bool> WasPlaced;
+RWTexture2D<float4> Result;
+
+[numthreads(1, 1, 1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	float4 tile;
+	
+	switch(TileToPlace)
+	{
+		case 0:
+			tile = BELT_RIGHT;
+			break;
+		case 1:
+			tile = BELT_LEFT;
+			break;
+		case 2:
+			tile = BELT_UP;
+			break;
+		default:
+			tile = LADDER;
+			break;
+	}
+	
+	if (IS_EMPTY(Result[WhereToPlace]))
+	{
+		Result[WhereToPlace] = tile;
+		WasPlaced[0] = true;
+	}
+	else
+	{
+		WasPlaced[0] = false;
+	}
+}
