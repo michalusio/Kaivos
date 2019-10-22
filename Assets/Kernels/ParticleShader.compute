@@ -326,21 +326,41 @@ void Treenemy(uint3 id : SV_DispatchThreadID)
 		{
 			tile.y = 1.0;
 			NewFrame[coords] = tile;
-			if (snoise(float3(id.xy, Time)) > 0.75)
+			if (snoise(float3(id.xy * 0.05, Time)) > 0.5)
 			{
-				if (!IS_EMPTY(tileAbove) && !IS_TREENEMY_CORE(tileAbove))
+				if (!IS_EMPTY(tileAbove) && !IS_TREENEMY_CORE(tileAbove) &&
+					(
+						!IS_TREENEMY_BRANCH(NewFrame[coordsAbove+eee.xy]) &&
+						!IS_TREENEMY_BRANCH(NewFrame[coordsAbove+eee.zy]) &&
+						!IS_TREENEMY_BRANCH(NewFrame[coordsAbove+eee.yx])
+					))
 				{
 					NewFrame[coordsAbove] = TREENEMY_BRANCH_ASLEEP;
 				}
-				if (!IS_EMPTY(tileBelow) && !IS_TREENEMY_CORE(tileBelow))
+				if (!IS_EMPTY(tileBelow) && !IS_TREENEMY_CORE(tileBelow) &&
+					(
+						!IS_TREENEMY_BRANCH(NewFrame[coordsBelow+eee.xy]) &&
+						!IS_TREENEMY_BRANCH(NewFrame[coordsBelow+eee.zy]) &&
+						!IS_TREENEMY_BRANCH(NewFrame[coordsBelow+eee.yz])
+					))
 				{
 					NewFrame[coordsBelow] = TREENEMY_BRANCH_ASLEEP;
 				}
-				if (!IS_EMPTY(tileLeft) && !IS_TREENEMY_CORE(tileLeft))
+				if (!IS_EMPTY(tileLeft) && !IS_TREENEMY_CORE(tileLeft) &&
+					(
+						!IS_TREENEMY_BRANCH(NewFrame[coordsLeft+eee.zy]) &&
+						!IS_TREENEMY_BRANCH(NewFrame[coordsLeft+eee.yz]) &&
+						!IS_TREENEMY_BRANCH(NewFrame[coordsLeft+eee.yx])
+					))
 				{
 					NewFrame[coordsLeft] = TREENEMY_BRANCH_ASLEEP;
 				}
-				if (!IS_EMPTY(tileRight) && !IS_TREENEMY_CORE(tileRight))
+				if (!IS_EMPTY(tileRight) && !IS_TREENEMY_CORE(tileRight) &&
+					(
+						!IS_TREENEMY_BRANCH(NewFrame[coordsRight+eee.xy]) &&
+						!IS_TREENEMY_BRANCH(NewFrame[coordsRight+eee.yz]) &&
+						!IS_TREENEMY_BRANCH(NewFrame[coordsRight+eee.yx])
+					))
 				{
 					NewFrame[coordsRight] = TREENEMY_BRANCH_ASLEEP;
 				}
