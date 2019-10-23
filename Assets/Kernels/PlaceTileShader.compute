@@ -38,13 +38,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 	{
 		Result[WhereToPlace] = tile;
 		WasPlaced[0] = true;
-		if (TileToPlace == 4)
-		{
-			Result[WhereToPlace + int2(-1, 0)] = TREENEMY_BRANCH_ASLEEP;
-			Result[WhereToPlace + int2(1, 0)] = TREENEMY_BRANCH_ASLEEP;
-			Result[WhereToPlace + int2(0, -1)] = TREENEMY_BRANCH_ASLEEP;
-			Result[WhereToPlace + int2(0, 1)] = TREENEMY_BRANCH_ASLEEP;
-		}
 	}
 	else
 	{

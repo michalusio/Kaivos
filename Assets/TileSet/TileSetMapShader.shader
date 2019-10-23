@@ -196,7 +196,7 @@
 				{
 					float ratio = col.y;
 					col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes.w - 4 - pos.y))/_Sizes.zw);
-					col.b *= ratio;
+					col.g *= ratio;
 				}
 				else
 				{
