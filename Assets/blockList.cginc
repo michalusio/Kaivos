@@ -5,6 +5,8 @@
 #define MAPGEN_COPPER_H 0.2
 #define MAPGEN_GOLD_H 0.8
 
+#define EMPTY_POS float2(0, 0)
+
 #define GRASS float4(0, 0.2, 0.2, 1.0)
 #define DIRT float4(0.1, 0.2, 0.2, 1.0)
 #define ROCK1 float4(0.2, 0.2, 0.2, 1.0)

@@ -18,12 +18,12 @@ void ShadowMap(uint3 id : SV_DispatchThreadID)
 		Result[id.xy] = max(Result[id.xy], float4(glowColor, 1.0));
 	}
 	if (
-		IS_LIGHTED(Frame[id.xy]) ||
+		(IS_LIGHTED(Frame[id.xy]) ||
 		(LIGHT(Result[id.xy + e.xy]) && IS_EMPTY(Frame[id.xy + e.xy])) ||
 		(LIGHT(Result[id.xy + e.zy]) && IS_EMPTY(Frame[id.xy + e.zy])) ||
 		(LIGHT(Result[id.xy + e.yx]) && IS_EMPTY(Frame[id.xy + e.yx])) ||
-		(LIGHT(Result[id.xy + e.yz]) && IS_EMPTY(Frame[id.xy + e.yz]))
-		)
+		(LIGHT(Result[id.xy + e.yz]) && IS_EMPTY(Frame[id.xy + e.yz])))
+		&& id.y > 981)
 	{
 		Result[id.xy] = float4(1.0, 1.0, 1.0, 1.0);
 	}

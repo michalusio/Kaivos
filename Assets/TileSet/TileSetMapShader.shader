@@ -69,7 +69,11 @@
 					col.yzw = float3(0.4, 0.4, 1.0);
 					wasMined = true;
 				}
-				if (IS_EQUAL(col, GRASS))
+				if (IS_EMPTY(col) && i.uv.y * _Sizes.y < 981)
+				{
+					pos = EMPTY_POS;
+				}
+				else if (IS_EQUAL(col, GRASS))
 				{
 					pos = GRASS_POS;
 				}
@@ -172,12 +176,10 @@
 						}
 					}
 				}
-				
+				float2 position = trunc(i.uv * _Sizes.xy);
 				if (IS_ANIMATED(col))
 				{
-					float2 position = trunc(i.uv * _Sizes.xy);
 					float noise = trunc(_Time.z * 5) * 4;
-					
 					if (!IS_BELT(col))
 					{
 						noise += trunc((snoise(position) + 1) * 4) * 4;
@@ -186,11 +188,15 @@
 				}
 				else
 				{
-					float2 position = trunc(i.uv * _Sizes.xy);
 					float noise = trunc((snoise(position) + 1) * 4) * 4;
 					col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
 				}
-				
+				if (i.uv.y * _Sizes.y < 981)
+				{
+					pos = EMPTY_POS;
+					float4 emptyCol = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + trunc((snoise(position) + 1) * 4) * 4, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					return float4(lerp(emptyCol.rgb, col.rgb, step(0.5, col.a)), 1.0) * shadow;
+				}
 				return col * shadow;
             }
             ENDCG
