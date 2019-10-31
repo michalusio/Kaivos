@@ -480,9 +480,9 @@ MonoBehaviour:
   m_UVRect:
     serializedVersion: 2
     x: 0
-    y: 0.09677419
+    y: 0.121212125
     width: 0.125
-    height: 0.032258064
+    height: 0.030303031
 --- !u!222 &411716371
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -503,7 +503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1e4608a60f69f4cbea2c97c3ed8168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SetTo: 12
+  SetTo: 14
 --- !u!1 &454942222
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,9 +564,9 @@ MonoBehaviour:
   m_UVRect:
     serializedVersion: 2
     x: 0
-    y: 0.06451613
+    y: 0.15151516
     width: 0.125
-    height: 0.032258064
+    height: 0.030303031
 --- !u!222 &454942225
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1820,9 +1820,9 @@ MonoBehaviour:
   m_UVRect:
     serializedVersion: 2
     x: 0
-    y: 0.032258064
+    y: 0.09090909
     width: 0.125
-    height: 0.032258064
+    height: 0.030303031
 --- !u!222 &1530139982
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1843,7 +1843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1e4608a60f69f4cbea2c97c3ed8168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SetTo: 14
+  SetTo: 15
 --- !u!1 &1541781940
 GameObject:
   m_ObjectHideFlags: 0
@@ -1904,9 +1904,9 @@ MonoBehaviour:
   m_UVRect:
     serializedVersion: 2
     x: 0
-    y: 0
+    y: 0.060606062
     width: 0.125
-    height: 0.032258064
+    height: 0.030303031
 --- !u!222 &1541781943
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2297,9 +2297,9 @@ MonoBehaviour:
   m_UVRect:
     serializedVersion: 2
     x: 0
-    y: 0.12903225
+    y: 0.030303031
     width: 0.125
-    height: 0.032258064
+    height: 0.030303031
 --- !u!222 &1761067904
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2320,7 +2320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1e4608a60f69f4cbea2c97c3ed8168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SetTo: 10
+  SetTo: 12
 --- !u!1 &1813542469
 GameObject:
   m_ObjectHideFlags: 0

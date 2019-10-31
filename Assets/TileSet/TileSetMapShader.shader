@@ -8,6 +8,7 @@
 		_MachineTex ("Machine Tile Set Texture", 2D) = "white" {}
 		_Sizes ("Texture Sizes", Vector) = (0, 0, 0, 0)
 		_Sizes2 ("Texture Sizes 2", Vector) = (0, 0, 0, 0)
+		_PlayerPos ("Player Position", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {
@@ -51,6 +52,7 @@
 			sampler2D _MachineTex;
 			float4 _Sizes;
 			float4 _Sizes2;
+			float4 _PlayerPos;
 			
 			float2 decodeShop(float4 shopColor)
 			{
@@ -61,7 +63,7 @@
             float4 frag (v2f i) : SV_Target
             {
                 float4 col = tex2D(_MainTex, i.uv);
-				float4 shadow = tex2D(_ShadowTex, i.uv);
+				float4 shadow = saturate(tex2D(_ShadowTex, i.uv));
 				float2 pos = float2(0, 0);
 				bool wasMined = false;
 				if (IS_MINED(col))
@@ -133,6 +135,10 @@
 				{
 					pos = LADDER_POS;
 				}
+				else if (IS_EQUAL(col, TORCH))
+				{
+					pos = TORCH_POS;
+				}
 				else if (IS_SHOP(col))
 				{
 					pos = SHOP_POS_START + decodeShop(col);
@@ -176,10 +182,12 @@
 						}
 					}
 				}
+				float2 parallaxPos = _PlayerPos.xy * PARALLAX_SCALE;
+				float noise;
 				float2 position = trunc(i.uv * _Sizes.xy);
 				if (IS_ANIMATED(col))
 				{
-					float noise = trunc(_Time.z * 5) * 4;
+					noise = trunc(_Time.z * 5) * 4;
 					if (!IS_BELT(col))
 					{
 						noise += trunc((snoise(position) + 1) * 4) * 4;
@@ -188,13 +196,23 @@
 				}
 				else
 				{
-					float noise = trunc((snoise(position) + 1) * 4) * 4;
-					col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					if (IS_EMPTY(col))
+					{
+						position = trunc(i.uv * _Sizes.xy - parallaxPos/4);
+						noise = trunc((snoise(position) + 1) * 4) * 4;
+						col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4 - parallaxPos) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					}
+					else
+					{
+						noise = trunc((snoise(position) + 1) * 4) * 4;
+						col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					}
 				}
 				if (i.uv.y * _Sizes.y < 981)
 				{
 					pos = EMPTY_POS;
-					float4 emptyCol = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + trunc((snoise(position) + 1) * 4) * 4, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					position = trunc(i.uv * _Sizes.xy - parallaxPos/4);
+					float4 emptyCol = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4 - parallaxPos) % 4) + float2(pos.x + trunc((snoise(position) + 1) * 4) * 4, _Sizes.w - 4 - pos.y))/_Sizes.zw);
 					return float4(lerp(emptyCol.rgb, col.rgb, step(0.5, col.a)), 1.0) * shadow;
 				}
 				return col * shadow;

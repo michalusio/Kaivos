@@ -23,8 +23,11 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 		case 2:
 			tile = BELT_UP;
 			break;
-		default:
+		case 3:
 			tile = LADDER;
+			break;
+		default:
+			tile = TORCH;
 			break;
 	}
 	
