@@ -44,8 +44,8 @@
 #define TREENEMY_CORE_WOKEN float4(0.0, 0.1, 0.8, 1.0)
 #define TREENEMY_BRANCH_ASLEEP float4(0.1, 0.0, 0.8, 1.0)
 #define TREENEMY_BRANCH_ALERT float4(0.1, 0.1, 0.8, 1.0)
-#define TREENEMY_CORE_POS float2(0, 124)
-#define TREENEMY_BRANCH_POS float2(0, 128)
+#define TREENEMY_CORE_POS float2(0, 168)
+#define TREENEMY_BRANCH_POS float2(0, 124)
 
 #define SHOP_POS_START float2(0, 0)
 

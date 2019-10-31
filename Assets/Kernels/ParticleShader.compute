@@ -26,12 +26,13 @@ void GenerateTerrain(uint3 id : SV_DispatchThreadID)
 	NewFrame.GetDimensions(w, h);
 	float rockGrayNoise = seedNoise(id.xy/50.0);
 	float rockBrownNoise = seedNoise(id.xy/50.0+20);
-	NewFrame[id.xy] = float4(0, 0, 0, 0);
+	float4 whatToPlace = float4(0, 0, 0, 0);
+	
 	if ((int)id.y < h - 32.0)
 	{
 		if (rockGrayNoise * rockBrownNoise < 0.5)
 		{
-			NewFrame[id.xy] = lerp(ROCK1, ROCK2, step(rockGrayNoise, rockBrownNoise));
+			whatToPlace = lerp(ROCK1, ROCK2, step(rockGrayNoise, rockBrownNoise));
 			if (rockGrayNoise * rockBrownNoise < 0.4)
 			{
 				float heightPart = (h - id.y)/(float)h;
@@ -45,46 +46,48 @@ void GenerateTerrain(uint3 id : SV_DispatchThreadID)
 				{
 					if (ironNoise == maxNoise)
 					{
-						NewFrame[id.xy] = IRON;
+						whatToPlace = IRON;
 					}
 					else if (coalNoise == maxNoise)
 					{
-						NewFrame[id.xy] = COAL;
+						whatToPlace = COAL;
 					}
 					else if (copperNoise == maxNoise)
 					{
-						NewFrame[id.xy] = COPPER;
+						whatToPlace = COPPER;
 					}
 					else if (goldNoise == maxNoise)
 					{
-						NewFrame[id.xy] = GOLD;
+						whatToPlace = GOLD;
 					}
 				}
 			}
 		}
 		else if (id.y < h / 2)
 		{
-			NewFrame[id.xy] = LAVA;
+			whatToPlace = LAVA;
 		}
 		else
 		{
-			NewFrame[id.xy] = WATER;
+			whatToPlace = WATER;
 		}
 	}
 	
 	float dirtNoise = (seedNoise(float2(id.x / 50.0 + 80, 0.5)) + 1) * 5 + h - 38.0;
 	if (abs(id.y - dirtNoise) < 5)
 	{
-		NewFrame[id.xy] = DIRT;
+		whatToPlace = DIRT;
 	}
 	if (abs(id.y - dirtNoise - 5) < 0.5)
 	{
-		NewFrame[id.xy] = GRASS;
+		whatToPlace = GRASS;
 	}
 	if (id.y == 0)
 	{
-		NewFrame[id.xy] = BEDROCK;
+		whatToPlace = BEDROCK;
 	}
+	
+	NewFrame[id.xy] = whatToPlace;
 }
 
 #pragma kernel Particles

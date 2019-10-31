@@ -56,9 +56,9 @@ public class MenuItemSpriteSet : MonoBehaviour
         {BlockType.BELT_RIGHT, 112},
         {BlockType.BELT_UP, 116},
 
-        {BlockType.TREENEMY_CORE, 124},
-        {BlockType.TREENEMY_CORE_WOKEN, 124},
-        {BlockType.TREENEMY_BRANCH, 128}
+        {BlockType.TREENEMY_CORE, 168},
+        {BlockType.TREENEMY_CORE_WOKEN, 168},
+        {BlockType.TREENEMY_BRANCH, 124}
     };
 
     void Start()

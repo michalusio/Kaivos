@@ -55,7 +55,7 @@
 			float2 decodeShop(float4 shopColor)
 			{
 				float id = shopColor.x * 64;
-				return float2(trunc(id / 8),7 -  trunc(id % 8))*4;
+				return float2(trunc(id / 8),7 -  trunc(id % 8)) * 4;
 			}
 			
             float4 frag (v2f i) : SV_Target
@@ -136,23 +136,21 @@
 					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y))/_Sizes2.xy);
 					return col * shadow;
 				}
-				else if (IS_TREENEMY_CORE(col))
+				else if (IS_TREENEMY(col))
 				{
 					pos = TREENEMY_CORE_POS;
-				}
-				else if (IS_TREENEMY_BRANCH(col))
-				{
-					pos = TREENEMY_BRANCH_POS;
 				}
 				else return col * shadow;
 				
 				float4 colAbove = tex2D(_MainTex, i.uv + float2(0, 1.0/_Sizes.y));
-				float4 colLeft = tex2D(_MainTex, i.uv - float2(1.0/_Sizes.y, 0));
-				float4 colRight = tex2D(_MainTex, i.uv + float2(1.0/_Sizes.y, 0));
-				bool leftMined = IS_MINED(colLeft);
-				bool rightMined = IS_MINED(colRight);
+				float4 colLeft = tex2D(_MainTex, i.uv - float2(1.0/_Sizes.x, 0));
+				float4 colRight = tex2D(_MainTex, i.uv + float2(1.0/_Sizes.x, 0));
+				float4 colBelow = tex2D(_MainTex, i.uv - float2(0, 1.0/_Sizes.y));
+				
 				if (wasMined)
 				{
+					bool leftMined = IS_MINED(colLeft);
+					bool rightMined = IS_MINED(colRight);
 					if (IS_MINED(colAbove))
 					{
 						pos.y += 4;
@@ -194,9 +192,79 @@
 				}
 				else if (IS_TREENEMY(col))
 				{
-					float ratio = col.y;
-					col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes.w - 4 - pos.y))/_Sizes.zw);
-					col.g *= ratio;
+					float ratio = col.y * 0.5;
+					
+					float2 fraction = ((i.uv * _Sizes.xy * 4) % 4);
+					
+					int treenemyJoining = (IS_TREENEMY(colAbove) ? 1 : 0) + (IS_TREENEMY(colBelow) ? 2 : 0)
+										+ (IS_TREENEMY(colLeft) ? 4 : 0) + (IS_TREENEMY(colRight) ? 8 : 0) + (IS_TREENEMY_CORE(col) ? 16 : 0);
+					switch(treenemyJoining)
+					{
+						default:
+							pos = float2(0, 168);
+							break;//CORE
+						case 0:
+							pos = float2(0, 140);
+							break;//no connections
+						case 1:
+							pos = float2(0, 168);
+							break;//connection above
+						case 2:
+							pos = float2(0, 168);
+							break;//connection below
+						case 3:
+							pos = float2(0, 160);
+							break;//connection above and below
+						case 4:
+							pos = float2(0, 168);
+							break;//connection left
+						case 5:
+							pos = float2(0, 156);
+							break;//connection left and above
+						case 6:
+							pos = float2(0, 132);
+							break;//connection left and below
+						case 7:
+							pos = float2(0, 144);
+							break;//connection left, above and below
+						case 8:
+							pos = float2(0, 168);
+							break;//connection right
+						case 9:
+							pos = float2(0, 148);
+							break;//connection right and above
+						case 10:
+							pos = float2(0, 124);
+							break;//connection right and below
+						case 11:
+							pos = float2(0, 136);
+							break;//connection right, above and below
+						case 12:
+							pos = float2(0, 164);
+							break;//connection left and right
+						case 13:
+							pos = float2(0, 152);
+							break;//connection left, right and above
+						case 14:
+							pos = float2(0, 128);
+							break;//connection left, right and below
+						case 15:
+							pos = float2(0, 140);
+							break;//connections everywhere
+					}
+					
+					if (IS_TREENEMY_CORE(col))
+					{
+						float noise = trunc(_Time.z * 5) * 4;
+						col = tex2D(_TileTex, (fraction + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					}
+					else
+					{
+						float noise = trunc((snoise(position) + 1) * 4) * 4;
+						col = tex2D(_TileTex, (fraction + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					}
+					
+					col.g = lerp(col.g, sqrt(col.g), ratio);
 				}
 				else
 				{
