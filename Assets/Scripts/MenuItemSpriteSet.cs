@@ -27,7 +27,11 @@ public class MenuItemSpriteSet : MonoBehaviour
 
         BELT_LEFT,
         BELT_RIGHT,
-        BELT_UP
+        BELT_UP,
+
+        TREENEMY_CORE,
+        TREENEMY_CORE_WOKEN,
+        TREENEMY_BRANCH
     }
 
     private static readonly Dictionary<BlockType, int> BlockTypeY = new Dictionary<BlockType, int>
@@ -51,6 +55,10 @@ public class MenuItemSpriteSet : MonoBehaviour
         {BlockType.BELT_LEFT, 108},
         {BlockType.BELT_RIGHT, 112},
         {BlockType.BELT_UP, 116},
+
+        {BlockType.TREENEMY_CORE, 168},
+        {BlockType.TREENEMY_CORE_WOKEN, 168},
+        {BlockType.TREENEMY_BRANCH, 124}
     };
 
     void Start()

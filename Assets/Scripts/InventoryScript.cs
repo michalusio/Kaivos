@@ -23,12 +23,15 @@ public class InventoryScript : MonoBehaviour
         {
             if (BlockSlots != null && BlockSlots.Length > value)
             {
-                foreach(var img in BlockSlots)
+                if (BlockSlots[value].enabled)
                 {
-                    img.color = Color.gray;
+                    foreach(var img in BlockSlots)
+                    {
+                        img.color = Color.gray;
+                    }
+                    BlockSlots[value].color = Color.white;
+                    chosenSlot = value;
                 }
-                BlockSlots[value].color = Color.white;
-                chosenSlot = value;
             }
         }
     }
