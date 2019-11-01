@@ -207,16 +207,16 @@
 							pos = float2(0, 140);
 							break;//no connections
 						case 1:
-							pos = float2(0, 168);
+							pos = float2(0, 172);
 							break;//connection above
 						case 2:
-							pos = float2(0, 168);
+							pos = float2(0, 180);
 							break;//connection below
 						case 3:
 							pos = float2(0, 160);
 							break;//connection above and below
 						case 4:
-							pos = float2(0, 168);
+							pos = float2(0, 184);
 							break;//connection left
 						case 5:
 							pos = float2(0, 156);
@@ -228,7 +228,7 @@
 							pos = float2(0, 144);
 							break;//connection left, above and below
 						case 8:
-							pos = float2(0, 168);
+							pos = float2(0, 176);
 							break;//connection right
 						case 9:
 							pos = float2(0, 148);
