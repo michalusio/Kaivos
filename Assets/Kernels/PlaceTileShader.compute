@@ -10,7 +10,7 @@ RWTexture2D<float4> Result;
 [numthreads(1, 1, 1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-	float4 tile;
+	float4 tile = GRASS;
 	
 	switch(TileToPlace)
 	{
@@ -26,8 +26,13 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 		case 3:
 			tile = LADDER;
 			break;
-		default:
+    case 4:
 			tile = TORCH;
+    case 5:
+			tile = TREENEMY_CORE_ASLEEP;
+			break;
+		default:
+			tile = TREENEMY_BRANCH_ASLEEP;
 			break;
 	}
 	

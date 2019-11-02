@@ -3,6 +3,7 @@ Basic:
 	Dirt
 	Gray Stone
 	Brown Stone
+	Bedrock
 
 Ores:
 	Iron
@@ -14,7 +15,14 @@ Mechanical:
 	Left Belt
 	Right Belt
 	Up Belt
+	Splitter
+	Torch
 
 Liquids:
 	Water
 	Lava
+	Oil
+
+Enemies:
+	Treenemy Core
+	Treenemy Branch

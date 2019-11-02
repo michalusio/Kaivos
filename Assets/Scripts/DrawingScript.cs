@@ -30,7 +30,8 @@ public class DrawingScript : MonoBehaviour
             var mapScale = 1 << _mainScript.MAP_SCALING;
             Vector2 position = transform.position;
             var mapScaledHalfSize = new Vector2(_mainScript.mainTexturePrevFrame.width, _mainScript.mainTexturePrevFrame.height) * mapScale / 2;
-
+            
+            TileSetMapMaterial.SetTexture("_ShadowTex", _mainScript.shadowTexture);
             DrawMainMap(screenHalfSize, mapScale, position, mapScaledHalfSize);
 
             DrawCharacter(mapScale, screenHalfSize);
