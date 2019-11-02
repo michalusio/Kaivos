@@ -31,7 +31,6 @@ public class MenuItemSpriteSet : MonoBehaviour
         BELT_UP,
 
         TREENEMY_CORE,
-        TREENEMY_CORE_WOKEN,
         TREENEMY_BRANCH
     }
 
@@ -52,15 +51,14 @@ public class MenuItemSpriteSet : MonoBehaviour
         {BlockType.WATER, 104},
 
         {BlockType.LADDER, 120},
-        {BlockType.TORCH, 124},
+        {BlockType.TORCH, 188},
 
         {BlockType.BELT_LEFT, 108},
         {BlockType.BELT_RIGHT, 112},
         {BlockType.BELT_UP, 116},
 
         {BlockType.TREENEMY_CORE, 168},
-        {BlockType.TREENEMY_CORE_WOKEN, 168},
-        {BlockType.TREENEMY_BRANCH, 124}
+        {BlockType.TREENEMY_BRANCH, 140}
     };
 
     void Start()

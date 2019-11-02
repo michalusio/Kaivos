@@ -7,7 +7,7 @@
 
 #define PARALLAX_SCALE 0.5
 
-#define EMPTY_POS float2(0, 128)
+#define EMPTY_POS float2(0, 192)
 
 #define GRASS float4(0, 0.2, 0.2, 1.0)
 #define DIRT float4(0.1, 0.2, 0.2, 1.0)
@@ -23,7 +23,7 @@
 #define LADDER float4(0, 0.3, 0.3, 1.0)
 #define LADDER_POS float2(0, 120)
 #define TORCH float4(0.1, 0.3, 0.3, 1.0)
-#define TORCH_POS float2(0, 124)
+#define TORCH_POS float2(0, 188)
 
 #define COPPER float4(0, 0.4, 0.4, 1.0)
 #define IRON float4(0.1, 0.4, 0.4, 1.0)
