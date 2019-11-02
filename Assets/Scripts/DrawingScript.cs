@@ -46,6 +46,8 @@ public class DrawingScript : MonoBehaviour
 
     private void DrawMainMap(Vector2 screenHalfSize, int mapScale, Vector2 position, Vector2 mapScaledHalfSize)
     {
+        TileSetMapMaterial.SetVector("_PlayerPos", new Vector4(transform.position.x, transform.position.y, 0, 0));
+        TileSetMapMaterial.SetTexture("_ShadowTex", _mainScript.shadowTexture);
         Graphics.DrawTexture(new Rect(screenHalfSize - mapScaledHalfSize + position * mapScale, mapScaledHalfSize * 2), _mainScript.mainTexturePrevFrame, _mainScript.TileSetOn ? TileSetMapMaterial : null);
     }
 

@@ -24,6 +24,7 @@ public class MenuItemSpriteSet : MonoBehaviour
         WATER,
 
         LADDER,
+        TORCH,
 
         BELT_LEFT,
         BELT_RIGHT,
@@ -51,6 +52,7 @@ public class MenuItemSpriteSet : MonoBehaviour
         {BlockType.WATER, 104},
 
         {BlockType.LADDER, 120},
+        {BlockType.TORCH, 124},
 
         {BlockType.BELT_LEFT, 108},
         {BlockType.BELT_RIGHT, 112},

@@ -138,6 +138,7 @@ public class CharacterMovementScript : MonoBehaviour
         if (p.a < 0.5f) return 0;//empty
         if (p.a == 1 && p.g == 0.1f && p.b == 0.1f) return 0;//shop
         if (p.a == 1 && p.g == 0.5f && p.b == 0.5f) return 0;//mined
+        if (p.a == 1 && p.r == 0.1f && p.g == 0.3f && p.b == 0.3f) return 0;//torch
         if (p.a == 1 && p.g == 0.7f && p.b == 0.7f) return 1;//liquid
         if (p.a == 1 && p.r == 0 && p.g == 0.3f && p.b == 0.3f) return 2;//ladder
         return 3;
