@@ -234,7 +234,7 @@ void PlaceShop(uint3 id : SV_DispatchThreadID)
 {
 	float number = id.x * 8 + id.y;
 	float4 x = float4(number/64.0, 0.1, 0.1, 1.0);
-	NewFrame[id.xy + int2(508, 1000)] = x;
+	NewFrame[id.xy + SHOP_PLACEMENT] = x;
 	if (id.y == 0)
 	{
 		int i;

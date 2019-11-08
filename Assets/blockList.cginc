@@ -54,6 +54,7 @@
 #define TREENEMY_BRANCH_POS float2(0, 124)
 
 #define SHOP_POS_START float2(0, 0)
+#define SHOP_PLACEMENT int2(508, 1000)
 
 #define IS_EQUAL(x, y) all(abs(x - y)<0.01)
 #define IS_EMPTY(x) (x.a < 0.5)

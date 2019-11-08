@@ -1234,6 +1234,7 @@ GameObject:
   - component: {fileID: 963194231}
   - component: {fileID: 963194226}
   - component: {fileID: 963194232}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Object
   m_TagString: MainCamera
@@ -1307,6 +1308,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a6a061cf111d348a2091098c857d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShopSellShader: {fileID: 7200000, guid: 3c044a7d68d360040a4d11495a046de4, type: 3}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1343,8 +1357,8 @@ MonoBehaviour:
   MineTileMaterial: {fileID: 2100000, guid: c6c3a948cc0c6194eb3fd557cb34815b, type: 2}
   MineTileTexture: {fileID: 2800000, guid: f12495c4104c56647b9c5d9a5a31ab31, type: 3}
   MineTileShader: {fileID: 7200000, guid: c06e59686178ee847ab89f1aaeb5df9f, type: 3}
-  MineSize: 2
-  MineSpeed: 0.1
+  MineSize: 1
+  MineSpeed: 1
   InstaMine: 0
 --- !u!114 &963194232
 MonoBehaviour:
