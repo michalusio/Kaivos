@@ -10,6 +10,6 @@ if errorlevel 1 (
 	git lfs clone --single-branch --no-hardlinks https://github.com/michalusio/Kaivos.git Kaivos-Master-Branch
 )
 md Kaivos-Master-Build
-"D:\Programy\UnityEditors\2019.2.12f1\Editor\Unity.exe" -batchmode -projectPath ".\Kaivos-Master-Branch\" -logfile 2>&1 > CON > "./Kaivos-Master-Build/KaivosBuild.log" -silent-crashes -nographics -executeMethod ScriptBatch.BuildGame -quit
-REM rd /s /q Kaivos-Master-Branch
+"D:\Programy\UnityEditors\2019.2.12f1\Editor\Unity.exe" -batchmode -projectPath ".\Kaivos-Master-Branch\" -logfile "./Kaivos-Master-Build/KaivosBuild.log" -silent-crashes -nographics -executeMethod ScriptBatch.BuildGame -quit
+rd /s /q Kaivos-Master-Branch
 start Kaivos-Master-Build
