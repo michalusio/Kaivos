@@ -1,2 +1,2 @@
-gource --key --highlight-users --multi-sampling --path "D:\Unity\Kaivos" --file-idle-time 0 --title "Kaivos"
+gource --key --highlight-users --multi-sampling --path "D:\Unity\Kaivos" --camera-mode track --file-idle-time 0 --file-filter "(meta|gitignore|gitattributes)" --seconds-per-day 1 --title "Kaivos"
 PAUSE

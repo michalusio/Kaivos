@@ -11,6 +11,6 @@ public class ScriptBatch
             if(scene.enabled) scenes.Add(scene.path);
         }
         
-        BuildPipeline.BuildPlayer(scenes.ToArray(), "%temp%/Kaivos-Master-Build/Bin/Kaivos.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
+        BuildPipeline.BuildPlayer(scenes.ToArray(), "../Kaivos-Master-Build/Bin/Kaivos.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
     }
 }
