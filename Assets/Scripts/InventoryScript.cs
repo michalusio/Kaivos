@@ -46,7 +46,7 @@ public class InventoryScript : MonoBehaviour
         KeyCode.Alpha6
     };
 
-    private int[] BlockAmounts;
+    public int[] BlockAmounts;
     public bool InfiniteInventory;
 
     private MainScript mainScript;
