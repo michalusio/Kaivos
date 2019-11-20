@@ -1,0 +1,15 @@
+﻿#pragma kernel CSMain
+#include "..\blockList.cginc"
+
+RWTexture2D<float4> NewFrame;
+
+[numthreads(8, 8, 1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    int2 shopSellPlace = SHOP_PLACEMENT - int2(9, 0);
+	float4 col = NewFrame[id.xy + shopSellPlace];
+	if (!IS_BELT(col))
+	{
+		NewFrame[id.xy + shopSellPlace] = float4(0, 0, 0, 0);
+	}
+}
