@@ -56,8 +56,9 @@
 			
 			float2 decodeShop(float4 shopColor)
 			{
-				float id = shopColor.x * 64;
-				return float2(trunc(id / 8),7 -  trunc(id % 8)) * 4;
+				float id = shopColor.x * 15;
+				float noise = trunc(_Time.z * 5) * 12;
+				return float2(trunc(id / 5) + noise,4 - trunc(id % 5)) * 4;
 			}
 			
             float4 frag (v2f i) : SV_Target
