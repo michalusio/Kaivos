@@ -13,14 +13,15 @@ IF errorlevel 1 (
 CALL :CHECK_FAIL
 echo.Building Kaivos using Unity...
 md Kaivos-Master-Build
-set BuildParams="-batchmode -projectPath ".\Kaivos-Master-Branch\" -logfile "./Kaivos-Master-Build/KaivosBuild.log" -silent-crashes -quit"
+set BuildParams=-batchmode -projectPath ".\Kaivos-Master-Branch\" -logfile "./Kaivos-Master-Build/KaivosBuild.log" -silent-crashes -quit
+echo.%BuildParams%
 set /p BuildMode="Build in Debug or Release (d/r)? "
 IF "%BuildMode%"=="d" (
 	echo.Building Kaivos in DEBUG version
-	"D:\Programy\UnityEditors\2019.2.12f1\Editor\Unity.exe" %BuildParams% -executeMethod ScriptBatch.BuildGameDebug
+	"D:\Programy\UnityEditors\2019.2.13f1\Editor\Unity.exe" %BuildParams% -executeMethod ScriptBatch.BuildGameDebug
 ) ELSE (
 	echo.Building Kaivos in RELEASE version
-	"D:\Programy\UnityEditors\2019.2.12f1\Editor\Unity.exe" %BuildParams% -executeMethod ScriptBatch.BuildGameRelease
+	"D:\Programy\UnityEditors\2019.2.13f1\Editor\Unity.exe" %BuildParams% -executeMethod ScriptBatch.BuildGameRelease
 )
 CALL :CHECK_FAIL
 

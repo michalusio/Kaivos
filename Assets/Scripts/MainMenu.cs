@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    void Start()
+    {
+        QualitySettings.vSyncCount = 1;
+    }
     public void PlayGame ()
     {
         SceneManager.LoadScene("SampleScene");
