@@ -4078,7 +4078,6 @@ MonoBehaviour:
   - {fileID: 737267567}
   - {fileID: 1120264280}
   - {fileID: 1750684042}
-  Money: 1000
   BlockAmounts: 
   InfiniteInventory: 0
 --- !u!114 &963194227
@@ -6697,36 +6696,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecfe1428f5310d343acc96b6b0001c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BCost: 2
-  BUCOst: 2
-  LCost: 5
-  TCost: 10
-  rbcost: {fileID: 115130391}
-  lbcost: {fileID: 1819631843}
-  ubcost: {fileID: 1683732551}
-  lcost: {fileID: 832140631}
-  tcost: {fileID: 782789264}
-  ShopButtons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  BeltCost: 2
+  UpBeltCost: 2
+  LadderCost: 5
+  TorchCost: 10
+  RightBeltCostText: {fileID: 115130391}
+  LeftBeltCostText: {fileID: 1819631843}
+  UpBeltCostText: {fileID: 1683732551}
+  LadderCostText: {fileID: 832140631}
+  TorchCostText: {fileID: 782789264}
 --- !u!1 &1648701829
 GameObject:
   m_ObjectHideFlags: 0
@@ -7415,9 +7393,8 @@ GameObject:
   - component: {fileID: 1695759568}
   - component: {fileID: 1695759570}
   - component: {fileID: 1695759569}
-  - component: {fileID: 1695759571}
   m_Layer: 5
-  m_Name: ShopandUpgrade
+  m_Name: ShopAndUpgrade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7480,18 +7457,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1695759567}
   m_CullTransparentMesh: 0
---- !u!114 &1695759571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1695759567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0dd3b5642de47d3448ee1ffc1fb1c807, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1706953126
 GameObject:
   m_ObjectHideFlags: 0
