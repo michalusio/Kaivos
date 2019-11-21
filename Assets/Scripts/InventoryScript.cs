@@ -10,7 +10,7 @@ public class InventoryScript : MonoBehaviour
     public RawImage[] BlockSlots;
     public Text[] BlockSlotAmounts;
     
-    public int Money = 1000;
+    public readonly MoneyController Money = 1000;
 
     private int chosenSlot;
     public int ChosenSlot
@@ -71,7 +71,7 @@ public class InventoryScript : MonoBehaviour
 
     void Update()
     {
-        MoneyText.text = Money.ToString() + "$";
+        MoneyText.text = Money.ToString();
         UpdateBlockAmounts();
 
         for(int i = 0; i < blockCodes.Length; i++)

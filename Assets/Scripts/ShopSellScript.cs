@@ -26,7 +26,7 @@ public class ShopSellScript : MonoBehaviour
         Color[] items = GetSoldItemsInShopArea();
         ClearItemsInShopArea();
         int price = items.Sum(i => Pricing.FirstOrDefault(p => ColorNear(i, p.Item1)).Item2);
-        inventoryScript.Money += price;
+        inventoryScript.Money.AddAmount(price);
     }
 
     private Color[] GetSoldItemsInShopArea()
