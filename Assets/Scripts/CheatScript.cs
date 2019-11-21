@@ -3,11 +3,21 @@ using UnityEngine.UI;
 
 public class CheatScript : MonoBehaviour
 {
+    public GameObject[] DebugObjects;
+
     private GameObject canvas;
+    
 
     void Start()
     {
         canvas = GameObject.Find("Canvas");
+        if (Debug.isDebugBuild)
+        {
+            foreach(var d in DebugObjects)
+            {
+                d.SetActive(true);
+            }
+        }
     }
 
     void Update()

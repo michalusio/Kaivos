@@ -240,6 +240,7 @@ void PlaceShop(uint3 id : SV_DispatchThreadID)
 		for (int i = -9; i < 3; i++)
 		{
 			int2 coord = SHOP_PLACEMENT + eee.yz + int2(i, 0);
+			NewFrame[coord] = BEDROCK;
 			while(IS_EMPTY(NewFrame[coord]))
 			{
 				NewFrame[coord] = BEDROCK;

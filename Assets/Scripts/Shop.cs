@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public class Shop : MonoBehaviour
@@ -26,11 +24,11 @@ public class Shop : MonoBehaviour
         GameObject MainO = GameObject.Find("Main Object");
         inventoryscript = MainO.GetComponent<InventoryScript>();
 
-        rbcost.text = BCost.ToString();
-        lbcost.text = BCost.ToString();
-        ubcost.text = BUCOst.ToString();
-        lcost.text = LCost.ToString();
-        tcost.text = TCost.ToString();
+        rbcost.text = BCost.ToString()+'$';
+        lbcost.text = BCost.ToString()+'$';
+        ubcost.text = BUCOst.ToString()+'$';
+        lcost.text = LCost.ToString()+'$';
+        tcost.text = TCost.ToString()+'$';
         
     }
     public bool Check_money(int price, int number)
