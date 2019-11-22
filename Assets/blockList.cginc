@@ -4,6 +4,10 @@
 #define MAPGEN_COAL_H 0.5
 #define MAPGEN_COPPER_H 0.2
 #define MAPGEN_GOLD_H 0.8
+#define MAPGEN_TREENEMY_COUNT 64
+#define MAPGEN_TREENEMY_BRANCH_COUNT 6
+#define MAPGEN_TREENEMY_BRANCH_LENGTH 30
+
 
 #define PARALLAX_SCALE 0.5
 
@@ -61,7 +65,7 @@
 
 #define IS_TREENEMY_CORE(u) IS_EQUAL(u.xzw, float3(0.0, 0.8, 1.0))
 #define IS_TREENEMY_BRANCH(u) IS_EQUAL(u.xzw, float3(0.1, 0.8, 1.0))
-#define IS_TREENEMY_TRIGGER(u) (abs(u.y - 1.0) < 0.01)
+#define IS_TREENEMY_TRIGGER(u) (abs(u.y - 1.0) < 0.05)
 #define IS_TREENEMY(u) IS_EQUAL(u.zw, float2(0.8, 1.0))
 #define IS_SHOP(x) IS_EQUAL(x.yzw, float3(0.1, 0.1, 1.0))
 #define IS_LIGHTED(x) (IS_SHOP(x) || IS_EQUAL(x, TORCH))
