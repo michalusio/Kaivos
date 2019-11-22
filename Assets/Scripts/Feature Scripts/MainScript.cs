@@ -48,6 +48,12 @@ public class MainScript : MonoBehaviour
         ParticleShader.SetInt("seed", Random.Range(0, 10000));
 
         ParticleShader.SetTexture(0, "NewFrame", mainTexturePrevFrame);
+        ParticleShader.SetTexture(5, "NewFrame", mainTexturePrevFrame);
+        ParticleShader.SetTexture(5, "FrameBefore", mainTexture);
+        ParticleShader.SetTexture(7, "NewFrame", mainTexturePrevFrame);
+        ParticleShader.SetTexture(7, "FrameBefore", mainTexture);
+
+
         ParticleShader.SetTexture(1, "NewFrame", mainTexture);
         ParticleShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.SetTexture(2, "NewFrame", mainTexture);
@@ -56,12 +62,13 @@ public class MainScript : MonoBehaviour
         ParticleShader.SetTexture(3, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.SetTexture(4, "NewFrame", mainTexture);
         ParticleShader.SetTexture(4, "FrameBefore", mainTexturePrevFrame);
-        ParticleShader.SetTexture(5, "NewFrame", mainTexturePrevFrame);
-        ParticleShader.SetTexture(5, "FrameBefore", mainTexture);
         ParticleShader.SetTexture(6, "NewFrame", mainTexture);
         ParticleShader.SetTexture(6, "FrameBefore", mainTexturePrevFrame);
+        
         ParticleShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
         ParticleShader.Dispatch(5, 1, 1, 1);
+        ParticleShader.Dispatch(7, 1, 1, 1);
+
         ShadowShader.SetTexture(0, "Frame", mainTexture);
         ShadowShader.SetTexture(0, "Result", shadowTexture);
         ShadowShader.SetTexture(1, "Frame", mainTexture);

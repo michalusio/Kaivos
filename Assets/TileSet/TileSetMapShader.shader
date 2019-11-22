@@ -188,7 +188,7 @@
 						}
 					}
 				}
-				float2 parallaxPos = _PlayerPos.xy * PARALLAX_SCALE;
+				float2 parallaxPos = trunc(_PlayerPos.xy * 4) * PARALLAX_SCALE / 4;
 				float noise;
 				float2 position = trunc(i.uv * _Sizes.xy);
 				if (IS_ANIMATED(col))
@@ -280,9 +280,9 @@
 				{
 					if (IS_EMPTY(col))
 					{
-						position = trunc(i.uv * _Sizes.xy - parallaxPos/4);
+						position = trunc(i.uv * _Sizes.xy - parallaxPos * 0.25);
 						noise = trunc((snoise(position) + 1) * 4) * 4;
-						col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4 - parallaxPos) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+						col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4 - parallaxPos) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y)) / _Sizes.zw);
 					}
 					else
 					{

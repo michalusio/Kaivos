@@ -25,7 +25,7 @@ void GenerateTerrain(uint3 id : SV_DispatchThreadID)
 	uint w, h;
 	NewFrame.GetDimensions(w, h);
 	float rockGrayNoise = seedNoise(id.xy/50.0);
-	float rockBrownNoise = seedNoise(id.xy/50.0+20);
+	float rockBrownNoise = seedNoise(id.xy/float2(200.0, 25.0)+20);
 	float4 whatToPlace = float4(0, 0, 0, 0);
 	
 	if ((int)id.y < h - 32.0)
@@ -374,6 +374,49 @@ void Treenemy(uint3 id : SV_DispatchThreadID)
 		{
 			tile.y = 0.1;
 			NewFrame[coords] = tile;
+		}
+	}
+}
+
+#pragma kernel TreenemySpawn
+[numthreads(MAPGEN_TREENEMY_COUNT, 1, 1)]
+void TreenemySpawn(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	int genSeed = seed * (id.x + 1);
+	int2 spawnPoint = int2((snoise(float2(genSeed + 0.5, 0.5)) + 1) * w / 2, (snoise(float2(0.5, genSeed + 0.5)) + 1) * h / 2);
+	NewFrame[spawnPoint] = TREENEMY_CORE_ASLEEP;
+	for (uint branchID = 0; branchID < MAPGEN_TREENEMY_BRANCH_COUNT; branchID++)
+	{
+		int2 branchCoords = spawnPoint;
+		int2 lastBranchDir = eee.yy;
+		for (uint branchLen = 0; branchLen < MAPGEN_TREENEMY_BRANCH_LENGTH; branchLen++)
+		{
+			float branchNoise = trunc((snoise(float2(genSeed + branchID * 21 + trunc(branchLen / 2) * 31 + 0.5, 0.5)) + 1) * 2);
+			int2 branchDir = eee.yz;
+			switch(branchNoise)
+			{
+				case 0:
+					branchDir = eee.xy;
+					break;
+				case 1:
+					branchDir = eee.yx;
+					break;
+				case 2:
+					branchDir = eee.zy;
+					break;
+			}
+			if (IS_EQUAL(lastBranchDir + branchDir, eee.yy))
+			{
+				branchDir = lastBranchDir;
+			}
+			branchCoords += branchDir;
+			lastBranchDir = branchDir;
+			if (!IS_TREENEMY_CORE(NewFrame[branchCoords]))
+			{
+				NewFrame[branchCoords] = TREENEMY_BRANCH_ASLEEP;
+			}
 		}
 	}
 }
