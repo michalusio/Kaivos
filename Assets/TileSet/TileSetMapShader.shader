@@ -196,7 +196,7 @@
 					noise = trunc(_Time.z * 5) * 4;
 					if (!IS_BELT(col))
 					{
-						noise += trunc((snoise(position) + 1) * 4) * 4;
+						noise += trunc((snoise(position * 231) + 1) * 4) * 4;
 					}
 					col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
 				}
@@ -289,6 +289,22 @@
 						noise = trunc((snoise(position) + 1) * 4) * 4;
 						col = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
 					}
+				}
+				if (IS_EQUAL(colRight, LAVA) || IS_EQUAL(colLeft, LAVA) || IS_EQUAL(colAbove, LAVA))
+				{
+					float noise = trunc((snoise(position) + 1) * 4) * 4 + trunc(_Time.z * 5) * 4;
+					pos = LAVA_POS;
+					position = trunc(i.uv * _Sizes.xy);
+					float4 emptyCol = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					return float4(lerp(emptyCol.rgb, col.rgb, step(0.5, col.a)), 1.0) * shadow;
+				}
+				if (IS_EQUAL(colRight, WATER) || IS_EQUAL(colLeft, WATER) || IS_EQUAL(colAbove, WATER))
+				{
+					float noise = trunc((snoise(position) + 1) * 4) * 4 + trunc(_Time.z * 5) * 4;
+					pos = WATER_POS;
+					position = trunc(i.uv * _Sizes.xy);
+					float4 emptyCol = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+					return float4(lerp(emptyCol.rgb, col.rgb, step(0.5, col.a)), 1.0) * shadow;
 				}
 				if (i.uv.y * _Sizes.y < 981)
 				{

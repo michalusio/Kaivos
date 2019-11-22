@@ -43,7 +43,10 @@ public class InventoryScript : MonoBehaviour
         KeyCode.Alpha3,
         KeyCode.Alpha4,
         KeyCode.Alpha5,
-        KeyCode.Alpha6
+        KeyCode.Alpha6,
+        KeyCode.Alpha7,
+        KeyCode.Alpha8,
+        KeyCode.Alpha9
     };
 
     public int[] BlockAmounts;
