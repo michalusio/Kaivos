@@ -88,13 +88,14 @@ public class CharacterMovementScript : MonoBehaviour
 
     private bool AttemptMove(Vector2 moveVector)
     {
-        switch (DetectCollision(transform.position + new Vector3(moveVector.x, moveVector.y, 0)))
+        (var collisionType, var collisionAmount) = DetectCollision(transform.position + new Vector3(moveVector.x, moveVector.y, 0));
+        switch (collisionType)
         {
             case 0:
                 transform.position += new Vector3(moveVector.x, moveVector.y, 0);
                 return true;
             case 1:
-                transform.position += new Vector3(moveVector.x, moveVector.y, 0) * 0.5f;
+                transform.position += new Vector3(moveVector.x, moveVector.y, 0) * (1 - 0.5f * collisionAmount);
                 return true;
             case 2:
                 if (moveVector.y >= 0)
@@ -112,11 +113,11 @@ public class CharacterMovementScript : MonoBehaviour
         return false;
     }
 
-    private int DetectCollision(Vector3 newPosition)
+    private (int, float) DetectCollision(Vector3 newPosition)
     {
-        collisionArray = GetFromTexture(new Vector2(mainScriptComponent.mainTexture.width / 2 - newPosition.x - 0.5f,mainScriptComponent.mainTexture.height / 2 - newPosition.y - 1));
+        collisionArray = GetFromTexture(new Vector2(mainScriptComponent.mainTexture.width / 2 - newPosition.x - 0.5f, mainScriptComponent.mainTexture.height / 2 - newPosition.y - 1));
         
-        return collisionArray.Max();
+        return (collisionArray.Max(), collisionArray.Count(c => c == 1) / 8f);
     }
 
     private int[] GetFromTexture(Vector2 position)
@@ -136,6 +137,7 @@ public class CharacterMovementScript : MonoBehaviour
     private int DecodePixel(Color p)
     {
         if (p.a < 0.5f) return 0;//empty
+        if (p.a == 1 && p.g == 0.6f && p.b == 0.6f) return 0;//belts
         if (p.a == 1 && p.g == 0.1f && p.b == 0.1f) return 0;//shop
         if (p.a == 1 && p.g == 0.5f && p.b == 0.5f) return 0;//mined
         if (p.a == 1 && p.r == 0.1f && p.g == 0.3f && p.b == 0.3f) return 0;//torch
