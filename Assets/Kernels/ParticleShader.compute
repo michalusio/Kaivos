@@ -20,7 +20,7 @@ float seedNoise(float3 pos)
 
 bool rand(float2 pos)
 {
-	return snoise(seed + Time * 37 + pos) > 0;
+	return seedNoise(Time * 37 + pos) > 0;
 }
 
 bool rand(float2 pos, int times)
@@ -282,38 +282,117 @@ void DownToUp(uint3 id : SV_DispatchThreadID)
 	}
 }
 
-#pragma kernel PlaceShop
-[numthreads(3, 5, 1)]
-void PlaceShop(uint3 id : SV_DispatchThreadID)
+#pragma kernel PlaceThings
+
+void MakeLeaves(int2 leavesStart)
 {
-	float number = id.x * 5 + id.y;
-	float4 x = float4(number/15.0, 0.1, 0.1, 1.0);
-	NewFrame[id.xy + SHOP_PLACEMENT] = x;
-	if (id.x == 0 && id.y == 0)
+	for (int x = -1; x < 2; x++)
 	{
-		for (int i = -9; i < 3; i++)
+		for (int y = -1; y < 2; y++)
 		{
-			int2 coord = SHOP_PLACEMENT + eee.yz + int2(i, 0);
-			NewFrame[coord] = BEDROCK;
-			while(IS_EMPTY(NewFrame[coord]))
+			int2 coords = leavesStart + int2(x, y);
+			if (IS_EMPTY(NewFrame[coords]))
 			{
-				NewFrame[coord] = BEDROCK;
-				coord += eee.yz;
+				NewFrame[coords] = TREE_LEAVES;
 			}
 		}
-		
-		int2 coord = SHOP_PLACEMENT + eee.yz + int2(-10, 0);
+	}
+}
+
+void MakeTreeBranch(int2 branchStart, bool direction)
+{
+	int3 dirVector = int3(1, 0, direction ? 1 : -1);
+	branchStart += dirVector.zy;
+	NewFrame[branchStart] = TREE_TRUNK;
+	MakeLeaves(branchStart);
+	branchStart += dirVector.zy;
+	NewFrame[branchStart] = TREE_TRUNK;
+	MakeLeaves(branchStart);
+	branchStart += dirVector.zx;
+	NewFrame[branchStart] = TREE_TRUNK;
+	MakeLeaves(branchStart);
+	branchStart += dirVector.zx;
+	NewFrame[branchStart] = TREE_TRUNK;
+	MakeLeaves(branchStart);
+}
+
+[numthreads(1, 1, 1)]
+void PlaceThings(uint3 id : SV_DispatchThreadID)
+{
+	uint mapW, mapH;
+	NewFrame.GetDimensions(mapW, mapH);
+	
+	for (int treeIndex = 0; treeIndex < MAPGEN_SURFACE_TREE_COUNT; treeIndex++)
+	{
+		int treeX = (int)((seedNoise(int2(treeIndex + 0.5, MAPGEN_SURFACE_TREE_COUNT + 0.5)) + 1) * 0.5 * mapW);
+		if (treeX + 15 > SHOP_PLACEMENT.x && treeX - 10 < SHOP_PLACEMENT.x) continue;
+		int treeStartY = 1023;
+		float4 spaceCol = NewFrame[int2(treeX, treeStartY - 1)];
+		while (IS_EMPTY(spaceCol) || IS_EQUAL(spaceCol, TREE_TRUNK) || IS_EQUAL(spaceCol, TREE_LEAVES))
+		{
+			treeStartY--;
+			spaceCol = NewFrame[int2(treeX, treeStartY - 1)];
+		}
+		int treeY = 0;
+		int treeHeight = 10;
+		for (; treeY < treeHeight; treeY++)
+		{
+			int2 branchPos = int2(treeX, treeY + treeStartY);
+			NewFrame[branchPos] = TREE_TRUNK;
+			if (treeY > 5 && rand(branchPos) && rand(branchPos, 1))
+			{
+				MakeTreeBranch(branchPos, rand(branchPos, 3));
+				treeHeight += 1;
+			}
+		}
+		for (int i = 0; i < 5; i++)
+		{
+			int2 noiseMove = int2((int)round(seedNoise(int2(treeX + 0.5, treeY + 1.5)) * 2), (int)round(-abs(seedNoise(int2(treeX + 0.5, treeY + 1.5)) * 2)));
+			bool rnd = rand(int2(treeX + 0.5, treeY + 1.5), i + 3);
+			if (rnd)
+			{
+				noiseMove.x = -abs(noiseMove);
+			}
+			else
+			{
+				noiseMove.x = abs(noiseMove);
+			}
+			MakeTreeBranch(int2(treeX, treeY + treeStartY) + noiseMove, rnd);
+		}
+	}
+	
+	for (int idx = 0; idx < 3; idx++)
+	{
+		for (int idy = 0; idy < 5; idy++)
+		{
+			float number = idx * 5 + idy;
+			float4 x = float4(number / 15.0, 0.1, 0.1, 1.0);
+			NewFrame[int2(idx, idy) + SHOP_PLACEMENT] = x;
+		}
+	}
+	
+	for (int i = -9; i < 3; i++)
+	{
+		int2 coord = SHOP_PLACEMENT + eee.yz + int2(i, 0);
+		NewFrame[coord] = BEDROCK;
 		while(IS_EMPTY(NewFrame[coord]))
 		{
-			NewFrame[coord] = LADDER;
+			NewFrame[coord] = BEDROCK;
 			coord += eee.yz;
 		}
-		coord = SHOP_PLACEMENT + eee.yz + int2(3, 0);
-		while(IS_EMPTY(NewFrame[coord]))
-		{
-			NewFrame[coord] = LADDER;
-			coord += eee.yz;
-		}
+	}
+	
+	int2 coord = SHOP_PLACEMENT + eee.yz + int2(-10, 0);
+	while(IS_EMPTY(NewFrame[coord]))
+	{
+		NewFrame[coord] = LADDER;
+		coord += eee.yz;
+	}
+	coord = SHOP_PLACEMENT + eee.yz + int2(3, 0);
+	while(IS_EMPTY(NewFrame[coord]))
+	{
+		NewFrame[coord] = LADDER;
+		coord += eee.yz;
 	}
 }
 

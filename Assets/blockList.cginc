@@ -4,6 +4,7 @@
 #define MAPGEN_COAL_H 0.5
 #define MAPGEN_COPPER_H 0.2
 #define MAPGEN_GOLD_H 0.8
+#define MAPGEN_SURFACE_TREE_COUNT 64
 #define MAPGEN_TREENEMY_COUNT 64
 #define MAPGEN_TREENEMY_BRANCH_COUNT 6
 #define MAPGEN_TREENEMY_BRANCH_LENGTH 30
@@ -18,15 +19,19 @@
 #define ROCK1 float4(0.2, 0.2, 0.2, 1.0)
 #define ROCK2 float4(0.3, 0.2, 0.2, 1.0)
 #define BEDROCK float4(0.4, 0.2, 0.2, 1.0)
+#define TREE_TRUNK float4(0.0, 0.5, 0.2, 1.0)
+#define TREE_LEAVES float4(0.0, 0.6, 0.2, 1.0)
 #define GRASS_POS float2(0, 0)
 #define DIRT_POS float2(0, 4)
 #define ROCK1_POS float2(0, 8)
 #define ROCK2_POS float2(0, 12)
 #define BEDROCK_POS float2(0, 16)
+#define TREE_TRUNK_POS float2(0, 196)
+#define TREE_LEAVES_POS float2(0, 200)
 
 #define LADDER float4(0, 0.3, 0.3, 1.0)
-#define LADDER_POS float2(0, 120)
 #define TORCH float4(0.1, 0.3, 0.3, 1.0)
+#define LADDER_POS float2(0, 120)
 #define TORCH_POS float2(0, 188)
 
 #define COPPER float4(0, 0.4, 0.4, 1.0)
@@ -62,6 +67,7 @@
 
 #define IS_EQUAL(x, y) all(abs(x - y)<0.01)
 #define IS_EMPTY(x) (x.a < 0.5)
+#define IS_TRANSPARENT(x) (IS_EMPTY(x) || IS_EQUAL(x, TREE_LEAVES))
 
 #define IS_TREENEMY_CORE(u) IS_EQUAL(u.xzw, float3(0.0, 0.8, 1.0))
 #define IS_TREENEMY_BRANCH(u) IS_EQUAL(u.xzw, float3(0.1, 0.8, 1.0))

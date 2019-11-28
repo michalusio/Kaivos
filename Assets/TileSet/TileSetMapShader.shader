@@ -140,6 +140,14 @@
 				{
 					pos = TORCH_POS;
 				}
+				else if (IS_EQUAL(col, TREE_TRUNK))
+				{
+					pos = TREE_TRUNK_POS;
+				}
+				else if (IS_EQUAL(col, TREE_LEAVES))
+				{
+					pos = TREE_LEAVES_POS;
+				}
 				else if (IS_SHOP(col))
 				{
 					pos = SHOP_POS_START + decodeShop(col);

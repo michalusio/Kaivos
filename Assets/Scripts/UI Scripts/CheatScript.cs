@@ -50,4 +50,9 @@ public class CheatScript : MonoBehaviour
     {
         FindObjectOfType<InventoryScript>().InfiniteInventory = change.isOn;
     }
+
+    public void ToggleTileSet(Toggle change)
+    {
+        FindObjectOfType<MainScript>().TileSetOn = !change.isOn;
+    }
 }
