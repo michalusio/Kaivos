@@ -29,10 +29,13 @@ public class PauseScript : MonoBehaviour
         SceneManager.LoadScene("Menu");
     }
 
-    public void GoToSaveGame()
+    public void ToggleSaveGame()
     {
-        PausePanel.SetActive(false);
-        SavePanel.SetActive(true);
-        SavePanel.GetComponent<SaveScript>().Populate();
+        PausePanel.SetActive(!PausePanel.activeSelf);
+        SavePanel.SetActive(!SavePanel.activeSelf);
+        if (SavePanel.activeSelf)
+        {
+            SavePanel.GetComponent<SaveScript>().Populate();
+        }
     }
 }
