@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-public class Shop : MonoBehaviour
+public class ShopScript : MonoBehaviour
 {
     public int BeltCost = 2;
     public int UpBeltCost = 2;
