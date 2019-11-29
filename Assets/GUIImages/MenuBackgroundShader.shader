@@ -1,8 +1,9 @@
-﻿Shader "Unlit/NewUnlitShader"
+﻿Shader "Unlit/MenuBackgroundShader"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+		_Sizes ("ScreenSize/TileSetSize", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {
@@ -14,11 +15,10 @@
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            // make fog work
-            #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
-            #define EMPTY_POS float2(0, 192)
+			#include "../noiseSimplex.cginc"
+            #define BLOCK_POS float2(0, 8)
 
             struct appdata
             {
@@ -29,29 +29,29 @@
             struct v2f
             {
                 float2 uv : TEXCOORD0;
-                UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
             };
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+			float4 _Sizes;
 
             v2f vert (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                UNITY_TRANSFER_FOG(o,o.vertex);
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
-                // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
-                return col*2;
+				i.uv /= 32;
+				float2 pos = BLOCK_POS;
+				float2 position = trunc(i.uv * _Sizes.xy);
+				float noise = trunc((snoise(position) + 1) * 4) * 4;
+				float4 col = tex2D(_MainTex, ((((i.uv + 1) * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y)) / _Sizes.zw);
+                return col;
             }
             ENDCG
         }

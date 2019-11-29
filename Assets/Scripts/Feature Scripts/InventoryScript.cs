@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -105,8 +106,17 @@ public class InventoryScript : MonoBehaviour
         }
     }
 
-    void OnApplicationQuit()
+    void OnDestroy()
     {
         wasTilePlaced?.Release();
+    }
+
+    public SaveStateStats GetSaveState()
+    {
+        return new SaveStateStats
+        {
+            Money = Money.GetAmount(),
+            BlockAmounts = BlockAmounts
+        };
     }
 }
