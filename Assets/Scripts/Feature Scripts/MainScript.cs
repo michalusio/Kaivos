@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 public class MainScript : MonoBehaviour
 {
+    public static string LoadPath = null;
+
     [Range(1, 6)]
     public int MAP_SCALING = 4;
 
@@ -18,23 +21,32 @@ public class MainScript : MonoBehaviour
 
     void Start()
     {
-        mainTexture = new RenderTexture(MAP_SIZE, MAP_SIZE, 0, RenderTextureFormat.ARGBFloat)
+        if (LoadPath == null)
         {
-            anisoLevel = 0,
-            enableRandomWrite = true,
-            autoGenerateMips = false,
-            filterMode = FilterMode.Point
-        };
-        mainTexture.Create();
+            mainTexture = new RenderTexture(MAP_SIZE, MAP_SIZE, 0, RenderTextureFormat.ARGBFloat)
+            {
+                anisoLevel = 0,
+                enableRandomWrite = true,
+                autoGenerateMips = false,
+                filterMode = FilterMode.Point
+            };
+            mainTexture.Create();
 
-        mainTexturePrevFrame = new RenderTexture(mainTexture.width, mainTexture.height, 0, RenderTextureFormat.ARGBFloat)
+            mainTexturePrevFrame = new RenderTexture(mainTexture.width, mainTexture.height, 0, RenderTextureFormat.ARGBFloat)
+            {
+                anisoLevel = 0,
+                enableRandomWrite = true,
+                autoGenerateMips = false,
+                filterMode = FilterMode.Point
+            };
+            mainTexturePrevFrame.Create();
+        }
+        else
         {
-            anisoLevel = 0,
-            enableRandomWrite = true,
-            autoGenerateMips = false,
-            filterMode = FilterMode.Point
-        };
-        mainTexturePrevFrame.Create();
+            var loadTexture = LoadScript.LoadPNG(Path.Combine(LoadPath, "map.png"));
+            mainTexture = LoadScript.FromTexture2D(loadTexture);
+            mainTexturePrevFrame = LoadScript.FromTexture2D(loadTexture);
+        }
 
         shadowTexture = new RenderTexture(mainTexture.width, mainTexture.height, 0, RenderTextureFormat.ARGBFloat)
         {
@@ -65,14 +77,18 @@ public class MainScript : MonoBehaviour
         ParticleShader.SetTexture(6, "NewFrame", mainTexture);
         ParticleShader.SetTexture(6, "FrameBefore", mainTexturePrevFrame);
         
-        ParticleShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
-        ParticleShader.Dispatch(5, 1, 1, 1);
-        ParticleShader.Dispatch(7, 1, 1, 1);
-
         ShadowShader.SetTexture(0, "Frame", mainTexture);
         ShadowShader.SetTexture(0, "Result", shadowTexture);
         ShadowShader.SetTexture(1, "Frame", mainTexture);
         ShadowShader.SetTexture(1, "Result", shadowTexture);
+
+        if (LoadPath == null)
+        {
+            ParticleShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
+            ParticleShader.Dispatch(5, 1, 1, 1);
+            ParticleShader.Dispatch(7, 1, 1, 1);
+        }
+        
         ShadowShader.Dispatch(1, 1, 1, 1);
     }
     
