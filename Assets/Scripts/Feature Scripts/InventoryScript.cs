@@ -1,4 +1,5 @@
-﻿using Assets.Scripts;
+﻿using System.IO;
+using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,7 +12,7 @@ public class InventoryScript : MonoBehaviour
     public RawImage[] BlockSlots;
     public Text[] BlockSlotAmounts;
     
-    public readonly MoneyController Money = 1000;
+    public MoneyController Money { get; private set; } = 1000;
 
     private int chosenSlot;
     public int ChosenSlot
@@ -63,6 +64,16 @@ public class InventoryScript : MonoBehaviour
         mainScript = FindObjectOfType<MainScript>();
         wasTilePlaced = new ComputeBuffer(1, 4, ComputeBufferType.Default);
         PlaceTileShader.SetBuffer(0, "WasPlaced", wasTilePlaced);
+
+        if (MainScript.LoadPath != null)
+        {
+            var saveState = LoadScript.LoadSaveState(Path.Combine(MainScript.LoadPath, "stats.json"));
+            Money = saveState.Money;
+            for(int i = 0; i < Mathf.Min(BlockAmounts.Length, saveState.BlockAmounts.Length); i++)
+            {
+                BlockAmounts[i] = saveState.BlockAmounts[i];
+            }
+        }
     }
 
     private void UpdateBlockAmounts()

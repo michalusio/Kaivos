@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,9 +33,9 @@ public class SaveScript : MonoBehaviour
 
     public void Populate()
     {
-        EnsureSaveFolderPath();
-        var potentialSaves = Directory.GetDirectories(GetSaveFolderPath());
-        var saves = potentialSaves.Where(s => IsValidSave(s)).ToList();
+        SaveUtilities.EnsureSaveFolderPath();
+        var potentialSaves = Directory.GetDirectories(SaveUtilities.GetSaveFolderPath());
+        var saves = potentialSaves.Where(s => SaveUtilities.IsValidSave(s)).ToList();
         Debug.Log($"Got {saves.Count} saves.");
         foreach (Transform child in ContentPanel.transform)
         {
@@ -52,7 +51,7 @@ public class SaveScript : MonoBehaviour
         }
     }
 
-    public void SetSaveGameNameFromButton(SaveItemPanelScript button)
+    private void SetSaveGameNameFromButton(SaveItemPanelScript button)
     {
         Debug.Log(button.SaveName);
         SaveNameInput.text = button.SaveName;
@@ -66,12 +65,12 @@ public class SaveScript : MonoBehaviour
 
     private void SaveGame(string saveName)
     {
-        if (!IsValidName(saveName))
+        if (!SaveUtilities.IsValidName(saveName))
         {
             Debug.Log($"Error saving {saveName}");
             return;
         }
-        var savePath = Path.Combine(GetSaveFolderPath(), saveName + Path.DirectorySeparatorChar);
+        var savePath = Path.Combine(SaveUtilities.GetSaveFolderPath(), saveName + Path.DirectorySeparatorChar);
         Directory.CreateDirectory(savePath);
         var mapPath = Path.Combine(savePath, "map.png");
         var statPath = Path.Combine(savePath, "stats.json");
@@ -84,7 +83,7 @@ public class SaveScript : MonoBehaviour
 
         Texture2D ToTexture2D(RenderTexture rTex)
         {
-            Texture2D tex = new Texture2D(rTex.width, rTex.height, TextureFormat.ARGB32, false);
+            Texture2D tex = new Texture2D(rTex.width, rTex.height, TextureFormat.RGBAFloat, false);
             RenderTexture.active = rTex;
             tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
             tex.Apply();
@@ -92,28 +91,5 @@ public class SaveScript : MonoBehaviour
         }
 
         Debug.Log($"Game {saveName} saved!");
-    }
-
-
-    private readonly Regex validSaveNameRegex = new Regex(@"(-|\w|\s|\.|\(|\))+", RegexOptions.Compiled);
-    private bool IsValidName(string saveName)
-    {
-        return validSaveNameRegex.IsMatch(saveName);
-    }
-
-    private void EnsureSaveFolderPath()
-    {
-        Directory.CreateDirectory(GetSaveFolderPath());
-    }
-
-    private bool IsValidSave(string savePath)
-    {
-        var filesInFolder = Directory.GetFiles(savePath);
-        return filesInFolder.Length == 2 && filesInFolder.Any(file => Path.GetFileName(file) == "map.png") && filesInFolder.Any(file => Path.GetFileName(file) == "stats.json");
-    }
-
-    private string GetSaveFolderPath()
-    {
-        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $"My Games{Path.DirectorySeparatorChar}Kaivos{Path.DirectorySeparatorChar}");
     }
 }

@@ -74,7 +74,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _MoveDirection: 1
-    - _MoveSpeed: 0
+    - _MoveSpeed: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0

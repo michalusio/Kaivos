@@ -137,15 +137,20 @@ public class CharacterMovementScript : MonoBehaviour
     private int DecodePixel(Color p)
     {
         if (p.a < 0.5f) return 0;//empty
-        if (p.a == 1 && p.g == 0.6f && p.b == 0.6f) return 0;//belts
-        if (p.a == 1 && p.g == 0.1f && p.b == 0.1f) return 0;//shop
-        if (p.a == 1 && p.g == 0.5f && p.b == 0.5f) return 0;//mined
-        if (p.a == 1 && p.g == 0.5f && p.b == 0.2f) return 0;//tree trunk
-        if (p.a == 1 && p.g == 0.6f && p.b == 0.2f) return 0;//tree leaves
-        if (p.a == 1 && p.r == 0.1f && p.g == 0.3f && p.b == 0.3f) return 0;//torch
-        if (p.a == 1 && p.g == 0.7f && p.b == 0.7f) return 1;//liquid
-        if (p.a == 1 && p.r == 0 && p.g == 0.3f && p.b == 0.3f) return 2;//ladder
+        if (Near(p.a, 1) && Near(p.g, 0.6f) && Near(p.b, 0.6f)) return 0;//belts
+        if (Near(p.a, 1) && Near(p.g, 0.1f) && Near(p.b, 0.1f)) return 0;//shop
+        if (Near(p.a, 1) && Near(p.g, 0.5f) && Near(p.b, 0.5f)) return 0;//mined
+        if (Near(p.a, 1) && Near(p.g, 0.5f) && Near(p.b, 0.2f)) return 0;//tree trunk
+        if (Near(p.a, 1) && Near(p.g, 0.6f) && Near(p.b, 0.2f)) return 0;//tree leaves
+        if (Near(p.a, 1) && Near(p.r, 0.1f) && Near(p.g, 0.3f) && Near(p.b, 0.3f)) return 0;//torch
+        if (Near(p.a, 1) && Near(p.g, 0.7f) && Near(p.b, 0.7f)) return 1;//liquid
+        if (Near(p.a, 1) && Near(p.r, 0) && Near(p.g, 0.3f) && Near(p.b, 0.3f)) return 2;//ladder
         return 3;
+    }
+
+    private bool Near(float x, float y)
+    {
+        return Mathf.Abs(x - y) < 0.05f;
     }
 
     public List<(Texture2D, Rect)> GetCollisionDebug()
