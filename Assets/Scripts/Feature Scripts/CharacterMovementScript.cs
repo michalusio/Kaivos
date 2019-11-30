@@ -84,10 +84,12 @@ public class CharacterMovementScript : MonoBehaviour
         switch (collisionType)
         {
             case PixelMovement.EMPTY:
+                transform.position += new Vector3(moveVector.x, moveVector.y, 0);
+                return true;
             case PixelMovement.LIQUID:
                 transform.position += new Vector3(moveVector.x, moveVector.y, 0) * (1 - 0.5f * collisionAmount);
                 return true;
-            case PixelMovement.SOLID:
+            case PixelMovement.LADDER:
                 if (moveVector.y >= 0)
                 {
                     transform.position += new Vector3(moveVector.x, moveVector.y, 0);
