@@ -64,6 +64,8 @@
 
 #define SHOP_POS_START float2(0, 0)
 #define SHOP_PLACEMENT int2(508, 1000)
+#define JUNCTION_POS_START float2(0, 20)
+#define FORGE_POS_START float2(0, 32)
 
 #define IS_EQUAL(x, y) all(abs(x - y)<0.01)
 #define IS_EMPTY(x) (x.a < 0.5)
@@ -74,6 +76,8 @@
 #define IS_TREENEMY_TRIGGER(u) (abs(u.y - 1.0) < 0.05)
 #define IS_TREENEMY(u) IS_EQUAL(u.zw, float2(0.8, 1.0))
 #define IS_SHOP(x) IS_EQUAL(x.yzw, float3(0.1, 0.1, 1.0))
+#define IS_JUNCTION(x) IS_EQUAL(x.yzw, float3(0.2, 0.1, 1.0))
+#define IS_FORGE(x) IS_EQUAL(x.yzw, float3(0.3, 0.1, 1.0))
 #define IS_LIGHTED(x) (IS_SHOP(x) || IS_EQUAL(x, TORCH))
 #define IS_GLOWING(x) IS_EQUAL(x, LAVA)
 #define IS_LIQUID(x) IS_EQUAL(x.yzw, float3(0.7, 0.7, 1.0))

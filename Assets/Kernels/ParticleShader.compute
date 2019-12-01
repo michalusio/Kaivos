@@ -351,11 +351,11 @@ void PlaceThings(uint3 id : SV_DispatchThreadID)
 			bool rnd = rand(int2(treeX + 0.5, treeY + 1.5), i + 3);
 			if (rnd)
 			{
-				noiseMove.x = -abs(noiseMove);
+				noiseMove.x = -abs(noiseMove.x);
 			}
 			else
 			{
-				noiseMove.x = abs(noiseMove);
+				noiseMove.x = abs(noiseMove.x);
 			}
 			MakeTreeBranch(int2(treeX, treeY + treeStartY) + noiseMove, rnd);
 		}
