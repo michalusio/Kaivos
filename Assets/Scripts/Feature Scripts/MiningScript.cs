@@ -19,14 +19,17 @@ public class MiningScript : MonoBehaviour
 
     private (int, int)? heldTile;
     private float heldTime;
+    public int ChosenMineSize { get; private set; }
 
     void Start()
     {
         _mainScript = GetComponent<MainScript>();
+        ChosenMineSize = 1;
     }
 
     void Update()
     {
+        ChosenMineSize = Mathf.Max(1, Mathf.Min(MineSize, ChosenMineSize + Mathf.RoundToInt(Input.mouseScrollDelta.y)));
         if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             (int, int) t = GetTileOnMouse(_mainScript);
@@ -38,7 +41,7 @@ public class MiningScript : MonoBehaviour
             else
             {
                 heldTime += Time.deltaTime;
-                if (heldTime > MineSpeed * MineSize || InstaMine)
+                if (heldTime > MineSpeed * ChosenMineSize || InstaMine)
                 {
                     MineTile(heldTile.Value.Item1, heldTile.Value.Item2);
                     heldTime = 0;
@@ -54,15 +57,15 @@ public class MiningScript : MonoBehaviour
 
     public float GetMiningProgress()
     {
-        return Mathf.Clamp01(heldTime / (MineSpeed * MineSize));
+        return Mathf.Clamp01(heldTime / (MineSpeed * ChosenMineSize));
     }
 
     private void MineTile(int tX, int tY)
     {
         MineTileShader.SetInts("Position", new int[] { tX, tY });
         MineTileShader.SetTexture(0, "Result", _mainScript.mainTexturePrevFrame);
-        MineTileShader.SetInts("Size", new int[] { MineSize * 2 - 1, MineSize * 2 - 1 });
-        MineTileShader.Dispatch(0, MineSize * 2 - 1, MineSize * 2 - 1, 1);
+        MineTileShader.SetInts("Size", new int[] { ChosenMineSize * 2 - 1, ChosenMineSize * 2 - 1 });
+        MineTileShader.Dispatch(0, ChosenMineSize * 2 - 1, ChosenMineSize * 2 - 1, 1);
     }
 
     public static (int, int) GetTileOnMouse(MainScript mainScript)

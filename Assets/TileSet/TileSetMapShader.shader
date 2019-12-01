@@ -57,8 +57,22 @@
 			float2 decodeShop(float4 shopColor)
 			{
 				float id = shopColor.x * 15;
-				float noise = trunc(_Time.z * 5) * 12;
-				return float2(trunc(id / 5) + noise,4 - trunc(id % 5)) * 4;
+				float noise = (trunc(_Time.z * 5) % 5) * 3;
+				return float2(trunc(id / 5) + noise, 4 - trunc(id % 5)) * 4;
+			}
+			
+			float2 decodeJunction(float4 junctionColor)
+			{
+				float id = junctionColor.x * 9;
+				float noise = (trunc(_Time.z * 8) % 8) * 3;
+				return float2(trunc(id / 3) + noise, 4 - trunc(id % 3)) * 4;
+			}
+			
+			float2 decodeForge(float4 forgeColor)
+			{
+				float id = forgeColor.x * 9;
+				float noise = (trunc(_Time.z * 8) % 8) * 3;
+				return float2(trunc(id / 3) + noise, 4 - trunc(id % 3)) * 4;
 			}
 			
             float4 frag (v2f i) : SV_Target
@@ -151,7 +165,19 @@
 				else if (IS_SHOP(col))
 				{
 					pos = SHOP_POS_START + decodeShop(col);
-					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y))/_Sizes2.xy);
+					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y)) / _Sizes2.xy);
+					return col * shadow;
+				}
+				else if (IS_JUNCTION(col))
+				{
+					pos = JUNCTION_POS_START + decodeJunction(col);
+					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y)) / _Sizes2.xy);
+					return col * shadow;
+				}
+				else if (IS_FORGE(col))
+				{
+					pos = FORGE_POS_START + decodeForge(col);
+					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y)) / _Sizes2.xy);
 					return col * shadow;
 				}
 				else if (IS_TREENEMY(col))
@@ -160,10 +186,11 @@
 				}
 				else return col * shadow;
 				
-				float4 colAbove = tex2D(_MainTex, i.uv + float2(0, 1.0/_Sizes.y));
-				float4 colLeft = tex2D(_MainTex, i.uv - float2(1.0/_Sizes.x, 0));
-				float4 colRight = tex2D(_MainTex, i.uv + float2(1.0/_Sizes.x, 0));
-				float4 colBelow = tex2D(_MainTex, i.uv - float2(0, 1.0/_Sizes.y));
+				float3 coordTable = float3(1.0 / _Sizes.x, 0, 1.0 / _Sizes.y);
+				float4 colAbove = tex2D(_MainTex, i.uv + coordTable.yz);
+				float4 colLeft = tex2D(_MainTex, i.uv - coordTable.xy);
+				float4 colRight = tex2D(_MainTex, i.uv + coordTable.xy);
+				float4 colBelow = tex2D(_MainTex, i.uv - coordTable.yz);
 				
 				if (wasMined)
 				{

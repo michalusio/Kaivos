@@ -19,7 +19,6 @@ public class DrawingScript : MonoBehaviour
         var machineTexture = TileSetMapMaterial.GetTexture("_MachineTex");
         TileSetMapMaterial.SetVector("_Sizes", new Vector4(_mainScript.mainTexture.width, _mainScript.mainTexture.height, tileTexture.width, tileTexture.height));
         TileSetMapMaterial.SetVector("_Sizes2", new Vector4(machineTexture.width, machineTexture.height, 0, 0));
-        
     }
 
     void OnGUI()
@@ -67,9 +66,9 @@ public class DrawingScript : MonoBehaviour
 
         var tileSize = new Vector2(mapScale, mapScale);
         _miningScript.MineTileMaterial.color = Color.Lerp(new Color(1, 1, 1, 0), Color.white, _miningScript.GetMiningProgress());
-        _miningScript.MineTileMaterial.SetInt("_Size", _miningScript.MineSize * 2 - 1);
-        var mineHalfSize = new Vector2(_miningScript.MineSize - 1, _miningScript.MineSize - 1);
-        Graphics.DrawTexture(new Rect(t * mapScale + (position - mineHalfSize) * mapScale - mapScaledHalfSize + screenHalfSize, tileSize * (_miningScript.MineSize * 2 - 1)), _miningScript.MineTileTexture, _miningScript.MineTileMaterial);
+        _miningScript.MineTileMaterial.SetInt("_Size", _miningScript.ChosenMineSize * 2 - 1);
+        var mineHalfSize = new Vector2(_miningScript.ChosenMineSize - 1, _miningScript.ChosenMineSize - 1);
+        Graphics.DrawTexture(new Rect(t * mapScale + (position - mineHalfSize) * mapScale - mapScaledHalfSize + screenHalfSize, tileSize * (_miningScript.ChosenMineSize * 2 - 1)), _miningScript.MineTileTexture, _miningScript.MineTileMaterial);
     }
 
     private void DebugCollisionBoxShow()
