@@ -10,7 +10,7 @@ RWTexture2D<float4> Result;
 [numthreads(1, 1, 1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-	float4 tile = GRASS;
+	float4 tile = float4(0, 0, 0, 0);
 	
 	switch(TileToPlace)
 	{
@@ -41,9 +41,32 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 		case 8:
 			tile = LAVA;
 			break;
+		case 9:
+			tile = float4(0, 0.2, 0.1, 1.0);//junction
+			break;
+		case 10:
+			tile = float4(0, 0.3, 0.1, 1.0);//forge
+			break;
 	}
-	
-	if (IS_EMPTY(Result[WhereToPlace]))
+	if (TileToPlace > 8)
+	{
+		for (int dx = 0; dx < 3; dx++)
+		{
+			for (int dy = 0; dy < 3; dy++)
+			{
+				if (!IS_EMPTY(Result[WhereToPlace + int2(dx - 1, dy - 1)])) return;
+			}
+		}
+		
+		for (dx = 0; dx < 3; dx++)
+		{
+			for (int dy = 0; dy < 3; dy++)
+			{
+				Result[WhereToPlace + int2(dx - 1, dy - 1)] = float4((dx * 3 + dy) / 9.0, tile.yzw);
+			}
+		}
+	}
+	else if (IS_EMPTY(Result[WhereToPlace]))
 	{
 		Result[WhereToPlace] = tile;
 		WasPlaced[0] = true;
