@@ -3,6 +3,7 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+		_AnimationSize ("Animation Size", Int) = 8
     }
     SubShader
     {
@@ -42,13 +43,14 @@
             }
 
             sampler2D _MainTex;
+			int _AnimationSize;
 
             fixed4 frag (v2f i) : SV_Target
             {
 				float timeMod = 0;
 				if (dot(i.color, i.color) > 3)
 				{
-					timeMod = trunc(_Time.y*10)/8;
+					timeMod = (trunc(_Time.y * 10) % _AnimationSize) / 8;
 				}
                 fixed4 col = i.color * tex2D(_MainTex, float2(i.uv.x + timeMod, i.uv.y));
                 return col;
