@@ -11,7 +11,8 @@ public class InventoryScript : MonoBehaviour
     public RawImage[] BlockSlots;
     public Text[] BlockSlotAmounts;
     
-    public MoneyController Money { get; private set; } = 1000;
+    public MoneyController Money { get; private set; } = 100000;
+    //public MoneyController Money { get; private set; } = 1000;
 
     private int chosenSlot;
     public int ChosenSlot
