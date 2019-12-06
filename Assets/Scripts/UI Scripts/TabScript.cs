@@ -37,7 +37,7 @@ public class TabScript : MonoBehaviour
         }
     }
 
-    void SetActivePanel(int panelID)
+    public void SetActivePanel(int panelID)
     {
         foreach(var panel in Panels)
         {

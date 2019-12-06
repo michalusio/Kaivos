@@ -1,0 +1,157 @@
+﻿#include "mechanics.cginc"
+
+#pragma kernel RightToLeft
+[numthreads(1, 256, 1)]
+void RightToLeft(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	for(int i = (int)w - 1; i > 0; i--)
+	{
+		int2 coords = int2(i, id.y);
+		int2 coordsAbove = coords + eee.yx;
+		int2 coordsAboveLeft = coords + eee.zx;
+		if (IS_EQUAL(NewFrame[coords], BELT_LEFT))
+		{
+			if (IS_EMPTY(NewFrame[coordsAboveLeft]) && IS_MOVABLE(NewFrame[coordsAbove]))
+			{
+				NewFrame[coordsAboveLeft] = NewFrame[coordsAbove];
+				NewFrame[coordsAbove] = 0;
+				i--;
+			}
+		}
+		else
+		{
+			int2 coordsLeft = coords + eee.xy;
+			int2 coordsRight = coords + eee.zy;
+			if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP)) continue;
+			if (IS_MOVABLE(NewFrame[coords]) && coords.y + eee.z >=0)
+			{
+				if (IS_EMPTY(NewFrame[coords + eee.xz]))
+				{
+					NewFrame[coords + eee.xz] = NewFrame[coords];
+					NewFrame[coords] = 0;
+				}
+				else if (IS_LIQUID(NewFrame[coords]) && (IS_EMPTY(NewFrame[coords+eee.xy]) || IS_EQUAL(NewFrame[coords + eee.xy], TORCH)) && (uint)(coords.x + eee.x) < w && rand(coords, 0))
+				{
+					NewFrame[coords+eee.xy] = NewFrame[coords];
+					NewFrame[coords] = 0;
+				}
+				else if (IS_LIQUID(NewFrame[coords + eee.xz]) && rand(coords + eee.xz, 1))
+				{
+					float4 temp = NewFrame[coords + eee.xz];
+					NewFrame[coords + eee.xz] = NewFrame[coords];
+					NewFrame[coords] = temp;
+				}
+				else if (IS_EQUAL(NewFrame[coords], LAVA) && IS_EQUAL(NewFrame[coords + eee.xy], WATER))
+				{
+					NewFrame[coords] = ROCK1;
+					NewFrame[coords + eee.xy] = 0;
+				}
+			}
+		}
+	}
+}
+
+#pragma kernel LeftToRight
+[numthreads(1, 256, 1)]
+void LeftToRight(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	int wLess = (int)w - 1;
+	for(int i = 0; i < wLess; i++)
+	{
+		int2 coords = int2(i, id.y);
+		int2 coordsAbove = coords + eee.yx;
+		int2 coordsAboveRight = coords + eee.xx;
+		if (IS_EQUAL(NewFrame[coords], BELT_RIGHT))
+		{
+			if (IS_EMPTY(NewFrame[coordsAboveRight]) && IS_MOVABLE(NewFrame[coordsAbove]))
+			{
+				NewFrame[coordsAboveRight] = NewFrame[coordsAbove];
+				NewFrame[coordsAbove] = 0;
+				i++;
+			}
+		}
+		else
+		{
+			int2 coordsLeft = coords + eee.xy;
+			int2 coordsRight = coords + eee.zy;
+			if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP)) continue;
+			if (IS_MOVABLE(NewFrame[coords]) && coords.y + eee.z >= 0)
+			{
+				if (IS_EMPTY(NewFrame[coords + eee.zz]))
+				{
+					NewFrame[coords + eee.zz] = NewFrame[coords];
+					NewFrame[coords] = 0;
+				}
+				else if (IS_LIQUID(NewFrame[coords]) && (IS_EMPTY(NewFrame[coords + eee.zy]) || IS_EQUAL(NewFrame[coords + eee.zy], TORCH)) && coords.x + eee.z >= 0 && rand(coords, 0))
+				{
+					NewFrame[coords + eee.zy] = NewFrame[coords];
+					NewFrame[coords] = 0;
+				}
+				else if (IS_LIQUID(NewFrame[coords + eee.zz]) && rand(coords + eee.zz, 1))
+				{
+					float4 temp = NewFrame[coords + eee.zz];
+					NewFrame[coords + eee.zz] = NewFrame[coords];
+					NewFrame[coords] = temp;
+				}
+				else if (IS_EQUAL(NewFrame[coords], LAVA) && IS_EQUAL(NewFrame[coords + eee.zy], WATER))
+				{
+					NewFrame[coords] = ROCK1;
+					NewFrame[coords + eee.zy] = 0;
+				}
+			}
+		}
+	}
+}
+
+#pragma kernel DownToUp
+[numthreads(256, 1, 1)]
+void DownToUp(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	for(uint i = 0; i < h; i++)
+	{
+		int2 coords = int2(id.x, i);
+		int2 coordsAbove = coords + eee.yx;
+		int2 coordsLeft = coords + eee.xy;
+		int2 coordsRight = coords + eee.zy;
+		int2 coordsTwoAbove = coordsAbove + eee.yx;
+		if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP))
+		{
+			if (IS_MOVABLE(NewFrame[coords]))
+			{
+				if (IS_BELT(NewFrame[coordsAbove]) && IS_EMPTY(NewFrame[coordsTwoAbove]))
+				{
+					NewFrame[coordsTwoAbove] = NewFrame[coords];
+					NewFrame[coords] = 0;
+				}
+				else if (IS_EMPTY(NewFrame[coordsAbove]))
+				{
+					NewFrame[coordsAbove] = NewFrame[coords];
+					NewFrame[coords] = 0;
+					i++;
+				}
+			}
+		}
+		else if (IS_EQUAL(NewFrame[coordsAbove], LAVA) && IS_MINED(NewFrame[coords]))
+		{
+			NewFrame[coords] = LAVA;
+			NewFrame[coordsAbove] = 0;
+		}
+		else if (IS_MINED(NewFrame[coordsAbove]) && IS_LIQUID(NewFrame[coords]))
+		{
+			float4 temp = NewFrame[coordsAbove];
+			NewFrame[coordsAbove] = NewFrame[coords];
+			NewFrame[coords] = temp;
+		}
+		else if (IS_EQUAL(NewFrame[coords], LAVA) && IS_EQUAL(NewFrame[coordsAbove], WATER))
+		{
+			NewFrame[coords] = ROCK1;
+			NewFrame[coordsAbove] = 0;
+		}
+	}
+}

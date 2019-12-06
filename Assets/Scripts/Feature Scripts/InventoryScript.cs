@@ -83,7 +83,7 @@ public partial class InventoryScript : MonoBehaviour
     {
         int tab = 0;
         int slot = 0;
-        for (int i = 0; i < BlockSlotAmounts.Length; i++)
+        for (int i = 0; i < BlockAmounts.Length; i++)
         {
             BlockSlotAmounts[tab][slot].text = BlockAmounts[i].ToString();
             slot++;

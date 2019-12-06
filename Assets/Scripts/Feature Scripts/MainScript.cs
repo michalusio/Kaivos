@@ -11,6 +11,8 @@ public class MainScript : MonoBehaviour
     public bool TileSetOn = true;
 
     public ComputeShader ParticleShader;
+    public ComputeShader BeltShader;
+    public ComputeShader PlaceShader;
     public ComputeShader ShadowShader;
 
     public RenderTexture mainTexture, mainTexturePrevFrame, shadowTexture;
@@ -56,70 +58,101 @@ public class MainScript : MonoBehaviour
             filterMode = FilterMode.Bilinear
         };
         shadowTexture.Create();
-        
-        ParticleShader.SetInt("seed", Random.Range(0, 10000));
 
-        ParticleShader.SetTexture(0, "NewFrame", mainTexturePrevFrame);
-        ParticleShader.SetTexture(5, "NewFrame", mainTexturePrevFrame);
-        ParticleShader.SetTexture(5, "FrameBefore", mainTexture);
-        ParticleShader.SetTexture(7, "NewFrame", mainTexturePrevFrame);
-        ParticleShader.SetTexture(7, "FrameBefore", mainTexture);
+        int seed = Random.Range(0, 10000);
+        PlaceShader.SetInt("seed", seed);
+        ParticleShader.SetInt("seed", seed);
+        BeltShader.SetInt("seed", seed);
 
+        SetupShaderTextures();
 
+        if (LoadPath == null)
+        {
+            GenerateMap();
+        }
+
+        ShadowShader.Dispatch(1, 1, 1, 1);
+    }
+
+    private void SetupShaderTextures()
+    {
+        ParticleShader.SetTexture(0, "NewFrame", mainTexture);
+        ParticleShader.SetTexture(0, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.SetTexture(1, "NewFrame", mainTexture);
         ParticleShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.SetTexture(2, "NewFrame", mainTexture);
         ParticleShader.SetTexture(2, "FrameBefore", mainTexturePrevFrame);
-        ParticleShader.SetTexture(3, "NewFrame", mainTexture);
-        ParticleShader.SetTexture(3, "FrameBefore", mainTexturePrevFrame);
-        ParticleShader.SetTexture(4, "NewFrame", mainTexture);
-        ParticleShader.SetTexture(4, "FrameBefore", mainTexturePrevFrame);
-        ParticleShader.SetTexture(6, "NewFrame", mainTexture);
-        ParticleShader.SetTexture(6, "FrameBefore", mainTexturePrevFrame);
-        
+        BeltShader.SetTexture(0, "NewFrame", mainTexture);
+        BeltShader.SetTexture(0, "FrameBefore", mainTexturePrevFrame);
+        BeltShader.SetTexture(1, "NewFrame", mainTexture);
+        BeltShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
+        BeltShader.SetTexture(2, "NewFrame", mainTexture);
+        BeltShader.SetTexture(2, "FrameBefore", mainTexturePrevFrame);
         ShadowShader.SetTexture(0, "Frame", mainTexture);
         ShadowShader.SetTexture(0, "Result", shadowTexture);
         ShadowShader.SetTexture(1, "Frame", mainTexture);
         ShadowShader.SetTexture(1, "Result", shadowTexture);
-
-        if (LoadPath == null)
-        {
-            ParticleShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
-            ParticleShader.Dispatch(5, 1, 1, 1);
-            ParticleShader.Dispatch(7, 1, 1, 1);
-        }
-        
-        ShadowShader.Dispatch(1, 1, 1, 1);
     }
-    
+
+    private void GenerateMap()
+    {
+        PlaceShader.SetTexture(0, "NewFrame", mainTexturePrevFrame);
+
+        PlaceShader.SetTexture(1, "NewFrame", mainTexturePrevFrame);
+        PlaceShader.SetTexture(1, "FrameBefore", mainTexture);
+        PlaceShader.SetTexture(2, "NewFrame", mainTexturePrevFrame);
+        PlaceShader.SetTexture(2, "FrameBefore", mainTexture);
+
+        PlaceShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
+        PlaceShader.Dispatch(1, 1, 1, 1);
+        PlaceShader.Dispatch(2, 1, 1, 1);
+    }
+
     void Update()
     {
         timeSinceLastPhysics += Time.deltaTime;
         while (timeSinceLastPhysics > 0.1f)
         {
             timeSinceLastPhysics -= 0.1f;
-            ParticleShader.SetFloat("Time", Time.realtimeSinceStartup);
-            ParticleShader.SetTexture(1, "NewFrame", mainTexture);
-            ParticleShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
-            ParticleShader.SetTexture(2, "NewFrame", mainTexture);
-            ParticleShader.SetTexture(2, "FrameBefore", mainTexturePrevFrame);
-            ParticleShader.SetTexture(3, "NewFrame", mainTexture);
-            ParticleShader.SetTexture(3, "FrameBefore", mainTexturePrevFrame);
-            ParticleShader.SetTexture(4, "NewFrame", mainTexture);
-            ParticleShader.SetTexture(4, "FrameBefore", mainTexturePrevFrame);
-            ParticleShader.SetTexture(6, "NewFrame", mainTexture);
-            ParticleShader.SetTexture(6, "FrameBefore", mainTexturePrevFrame);
-            ParticleShader.Dispatch(1, mainTexture.width / 256, 1, 1);
-            ParticleShader.Dispatch(2, 1, mainTexture.height / 256, 1);
-            ParticleShader.Dispatch(3, 1, mainTexture.height / 256, 1);
-            ParticleShader.Dispatch(4, mainTexture.width / 256, 1, 1);
-            ParticleShader.Dispatch(6, mainTexture.width / 16, mainTexture.height / 16, 1);
+            
+            SetupUpdateShaders();
+            DispatchUpdateShaders();
             SwitchTextures();
         }
 
         ShadowShader.SetFloat("Time", Time.realtimeSinceStartup);
         ShadowShader.SetTexture(0, "Frame", mainTexturePrevFrame);
         ShadowShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
+    }
+
+    private void SetupUpdateShaders()
+    {
+        ParticleShader.SetFloat("Time", Time.realtimeSinceStartup);
+        ParticleShader.SetTexture(0, "NewFrame", mainTexture);
+        ParticleShader.SetTexture(0, "FrameBefore", mainTexturePrevFrame);
+        ParticleShader.SetTexture(1, "NewFrame", mainTexture);
+        ParticleShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
+        ParticleShader.SetTexture(2, "NewFrame", mainTexture);
+        ParticleShader.SetTexture(2, "FrameBefore", mainTexturePrevFrame);
+
+        BeltShader.SetFloat("Time", Time.realtimeSinceStartup);
+        BeltShader.SetTexture(0, "NewFrame", mainTexture);
+        BeltShader.SetTexture(0, "FrameBefore", mainTexturePrevFrame);
+        BeltShader.SetTexture(1, "NewFrame", mainTexture);
+        BeltShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
+        BeltShader.SetTexture(2, "NewFrame", mainTexture);
+        BeltShader.SetTexture(2, "FrameBefore", mainTexturePrevFrame);
+    }
+
+    private void DispatchUpdateShaders()
+    {
+        ParticleShader.Dispatch(0, mainTexture.width / 256, 1, 1);
+        ParticleShader.Dispatch(1, mainTexture.width / 16, mainTexture.height / 16, 1);
+        ParticleShader.Dispatch(2, mainTexture.width / 16, mainTexture.height / 16, 1);
+
+        BeltShader.Dispatch(0, 1, mainTexture.height / 256, 1);
+        BeltShader.Dispatch(1, 1, mainTexture.height / 256, 1);
+        BeltShader.Dispatch(2, mainTexture.width / 256, 1, 1);
     }
 
     private void SwitchTextures()

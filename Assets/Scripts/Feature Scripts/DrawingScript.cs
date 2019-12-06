@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(MainScript), typeof(CharacterMovementScript), typeof(MiningScript))]
 public class DrawingScript : MonoBehaviour
 {
     public Camera GuiCamera;
     public Material TileSetMapMaterial;
-    public RawImage SlotCursor;
 
+    private SlotCursorParams _slotCursor;
     private MainScript _mainScript;
     private CharacterMovementScript _characterMovementScript;
     private MiningScript _miningScript;
@@ -26,6 +25,7 @@ public class DrawingScript : MonoBehaviour
         TileSetMapMaterial.SetVector("_Sizes", new Vector4(_mainScript.mainTexture.width, _mainScript.mainTexture.height, tileTexture.width, tileTexture.height));
         TileSetMapMaterial.SetVector("_Sizes2", new Vector4(machineTexture.width, machineTexture.height, 0, 0));
 
+        _slotCursor = new SlotCursorParams();
         UpdateInventorySlot();
     }
 
@@ -33,10 +33,10 @@ public class DrawingScript : MonoBehaviour
     {
         if (Event.current.type == EventType.Repaint)
         {
-            var screenHalfSize = new Vector2(Screen.width, Screen.height) / 2;
+            var screenHalfSize = new Vector2(Screen.width, Screen.height) / 2f;
             var mapScale = 1 << _mainScript.MAP_SCALING;
             Vector2 position = transform.position;
-            var mapScaledHalfSize = new Vector2(_mainScript.mainTexturePrevFrame.width, _mainScript.mainTexturePrevFrame.height) * mapScale / 2;
+            var mapScaledHalfSize = new Vector2(_mainScript.mainTexturePrevFrame.width, _mainScript.mainTexturePrevFrame.height) * mapScale / 2f;
             
             TileSetMapMaterial.SetTexture("_ShadowTex", _mainScript.shadowTexture);
             DrawMainMap(screenHalfSize, mapScale, position, mapScaledHalfSize);
@@ -85,11 +85,9 @@ public class DrawingScript : MonoBehaviour
     {
         if (_inventoryScript.ChosenSlot.Tab < 0)
         {
-            SlotCursor.gameObject.SetActive(false);
             return;
         }
         
-        SlotCursor.gameObject.SetActive(true);
         if (prevInvSlot != _inventoryScript.ChosenSlot)
         {
             UpdateInventorySlot();
@@ -103,19 +101,18 @@ public class DrawingScript : MonoBehaviour
         var t = mouseP - screenHalfSize + mapScaledHalfSize - position * mapScale;
         t /= mapScale;
         t = new Vector2(Mathf.Floor(t.x), Mathf.Floor(t.y));
+
+        var tileSize = new Vector2(mapScale, mapScale);
         
-        var (Tab, Slot) = _inventoryScript.ChosenSlot;
-        var anchPos = t * mapScale + (position - blockSize * 0.5f) * mapScale - mapScaledHalfSize;
-        SlotCursor.GetComponent<RectTransform>().anchoredPosition = new Vector2(anchPos.x + mapScale * blockSize.x * 0.5f + mapScale * 0.5f, -anchPos.y - mapScale * blockSize.y * 0.5f - mapScale * 0.5f);
-        SlotCursor.GetComponent<RectTransform>().sizeDelta = new Vector2(mapScale, mapScale) * blockSize;
+        Graphics.DrawTexture(new Rect(t * mapScale + (position - blockSize * 0.5f + Vector2.one * 0.5f) * mapScale - mapScaledHalfSize + screenHalfSize, tileSize * blockSize), _slotCursor.texture, _slotCursor.uvRect, 0, 0, 0, 0, _slotCursor.material);
     }
 
     private void UpdateInventorySlot()
     {
         prevInvSlot = _inventoryScript.ChosenSlot;
-        SlotCursor.material = Instantiate(_inventoryScript.BlockSlots[prevInvSlot.Item1][prevInvSlot.Item2].material);
-        SlotCursor.texture = _inventoryScript.BlockSlots[prevInvSlot.Item1][prevInvSlot.Item2].mainTexture;
-        SlotCursor.uvRect = _inventoryScript.BlockSlots[prevInvSlot.Item1][prevInvSlot.Item2].uvRect;
+        _slotCursor.material = Instantiate(_inventoryScript.BlockSlots[prevInvSlot.Item1][prevInvSlot.Item2].material);
+        _slotCursor.texture = _inventoryScript.BlockSlots[prevInvSlot.Item1][prevInvSlot.Item2].mainTexture;
+        _slotCursor.uvRect = _inventoryScript.BlockSlots[prevInvSlot.Item1][prevInvSlot.Item2].uvRect;
     }
 
     private void DebugCollisionBoxShow()
@@ -127,5 +124,12 @@ public class DrawingScript : MonoBehaviour
                 Graphics.DrawTexture(rect, tex);
             }
         }
+    }
+
+    class SlotCursorParams
+    {
+        public Material material;
+        public Texture texture;
+        public Rect uvRect;
     }
 }
