@@ -7,6 +7,10 @@ using UnityEngine.EventSystems;
 public class UpgradeObjectScript : MonoBehaviour
 {
     public int[] Upgrade = new int[6];
+    public float[] UpgradeValue = new float[6];
+    public enum UpgradeType {MineS , MineA , MachineS, Jetpack, Teleporter, None};
+
+    public UpgradeType CurrentUpgradeType = UpgradeType.None;
     public Button Button1;
     public Button Button2;
     public Button Button3;
@@ -17,11 +21,13 @@ public class UpgradeObjectScript : MonoBehaviour
     private int currentCell = 0;
     
     private InventoryScript inventoryScript;
+    private MiningScript miningScript;
     
     void Awake ()
     {
         GameObject mainObject = GameObject.Find("Main Object");
         inventoryScript = mainObject.GetComponent<InventoryScript>();
+        miningScript = mainObject.GetComponent<MiningScript>();
 
         Cost.text = Upgrade[0].ToString() + '$';
         
@@ -36,11 +42,37 @@ public class UpgradeObjectScript : MonoBehaviour
         buttonu1.interactable = false;
         buttonu1.enabled=false;
         Cost.text = "MAX";
+        upgradeLevel();
         currentCell += 1;
         if (Upgrade[currentCell]!=0){
         buttonu2.GetComponent<Image>().color=Color.white;
         buttonu2.interactable = true;
         Cost.text = (Upgrade[currentCell]).ToString() + '$';
+        }
+    }
+    public void upgradeLevel ()
+    {
+        if (CurrentUpgradeType == UpgradeType.MineS)
+        {
+            miningScript.MineSpeed += UpgradeValue[currentCell];
+            Debug.Log(miningScript.MineSpeed);
+        }
+        else if (CurrentUpgradeType == UpgradeType.MineA)
+        {
+            miningScript.MineSize = (int)UpgradeValue[currentCell];
+            Debug.Log(miningScript.MineSize);
+        }
+        else if (CurrentUpgradeType == UpgradeType.MachineS)
+        {
+            //upgrade MachineS
+        }
+        else if (CurrentUpgradeType == UpgradeType.Jetpack)
+        {
+            //upgrade Jetpack
+        }
+        else if (CurrentUpgradeType == UpgradeType.Teleporter)
+        {
+            //upgrade Telep
         }
     }
     public void BuyUpgrade()
