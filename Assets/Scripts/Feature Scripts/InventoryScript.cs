@@ -15,7 +15,8 @@ public partial class InventoryScript : MonoBehaviour
     [SerializeField] public RawImageMult[] BlockSlots;
     [SerializeField] public TextMult[] BlockSlotAmounts;
     
-    public MoneyController Money { get; private set; } = 1000;
+    public MoneyController Money { get; private set; } = 100000;
+    //public MoneyController Money { get; private set; } = 1000;
 
     private (int Tab, int Slot) chosenSlot;
     public (int Tab, int Slot) ChosenSlot
