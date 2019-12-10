@@ -1,0 +1,230 @@
+﻿#include "mechanics.cginc"
+
+#pragma kernel GenerateTerrain
+[numthreads(16, 16, 1)]
+void GenerateTerrain(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	float rockGrayNoise = seedNoise(id.xy/50.0);
+	float rockBrownNoise = seedNoise(id.xy/float2(200.0, 25.0)+20);
+	float4 whatToPlace = float4(0, 0, 0, 0);
+	
+	if ((int)id.y < h - 32.0)
+	{
+		if (rockGrayNoise * rockBrownNoise < 0.5)
+		{
+			whatToPlace = lerp(ROCK1, ROCK2, step(rockGrayNoise, rockBrownNoise));
+			if (rockGrayNoise * rockBrownNoise < 0.4)
+			{
+				float heightPart = (h - id.y)/(float)h;
+				
+				float ironNoise = max(0, seedNoise(id.xy/ORE_SIZE+40)) * (1-(heightPart-MAPGEN_IRON_H)*(heightPart-MAPGEN_IRON_H));
+				float coalNoise = max(0, seedNoise(id.xy/ORE_SIZE+60)) * (1-(heightPart-MAPGEN_COAL_H)*(heightPart-MAPGEN_COAL_H));
+				float copperNoise = max(0, seedNoise(id.xy/ORE_SIZE+80)) * (1-(heightPart-MAPGEN_COPPER_H)*(heightPart-MAPGEN_COPPER_H));
+				float goldNoise = max(0, 0.8 * seedNoise(id.xy/ORE_SIZE+100)) * (1-(heightPart-MAPGEN_GOLD_H)*(heightPart-MAPGEN_GOLD_H));
+				float maxNoise = max(max(max(ironNoise,coalNoise),copperNoise),goldNoise);
+				if (maxNoise > 0.7)
+				{
+					if (ironNoise == maxNoise)
+					{
+						whatToPlace = IRON;
+					}
+					else if (coalNoise == maxNoise)
+					{
+						whatToPlace = COAL;
+					}
+					else if (copperNoise == maxNoise)
+					{
+						whatToPlace = COPPER;
+					}
+					else if (goldNoise == maxNoise)
+					{
+						whatToPlace = GOLD;
+					}
+				}
+			}
+		}
+		else if (id.y < h / 2)
+		{
+			whatToPlace = LAVA;
+		}
+		else
+		{
+			whatToPlace = WATER;
+		}
+	}
+	
+	float dirtNoise = (seedNoise(float2(id.x / 50.0 + 80, 0.5)) + 1) * 5 + h - 38.0;
+	if (abs(id.y - dirtNoise) < 5)
+	{
+		whatToPlace = DIRT;
+	}
+	if (abs(id.y - dirtNoise - 5) < 0.5)
+	{
+		whatToPlace = GRASS;
+	}
+	if (id.y == 0)
+	{
+		whatToPlace = BEDROCK;
+	}
+	
+	NewFrame[id.xy] = whatToPlace;
+}
+
+#pragma kernel PlaceThings
+
+void MakeLeaves(int2 leavesStart)
+{
+	for (int x = -1; x < 2; x++)
+	{
+		for (int y = -1; y < 2; y++)
+		{
+			int2 coords = leavesStart + int2(x, y);
+			if (IS_EMPTY(NewFrame[coords]))
+			{
+				NewFrame[coords] = TREE_LEAVES;
+			}
+		}
+	}
+}
+
+void MakeTreeBranch(int2 branchStart, bool direction)
+{
+	int3 dirVector = int3(1, 0, direction ? 1 : -1);
+	branchStart += dirVector.zy;
+	NewFrame[branchStart] = TREE_TRUNK;
+	MakeLeaves(branchStart);
+	branchStart += dirVector.zy;
+	NewFrame[branchStart] = TREE_TRUNK;
+	MakeLeaves(branchStart);
+	branchStart += dirVector.zx;
+	NewFrame[branchStart] = TREE_TRUNK;
+	MakeLeaves(branchStart);
+	branchStart += dirVector.zx;
+	NewFrame[branchStart] = TREE_TRUNK;
+	MakeLeaves(branchStart);
+}
+
+[numthreads(1, 1, 1)]
+void PlaceThings(uint3 id : SV_DispatchThreadID)
+{
+	uint mapW, mapH;
+	NewFrame.GetDimensions(mapW, mapH);
+	
+	for (int treeIndex = 0; treeIndex < MAPGEN_SURFACE_TREE_COUNT; treeIndex++)
+	{
+		int treeX = (int)((seedNoise(int2(treeIndex + 0.5, MAPGEN_SURFACE_TREE_COUNT + 0.5)) + 1) * 0.5 * mapW);
+		if (treeX + 15 > SHOP_PLACEMENT.x && treeX - 10 < SHOP_PLACEMENT.x) continue;
+		int treeStartY = 1023;
+		float4 spaceCol = NewFrame[int2(treeX, treeStartY - 1)];
+		while (IS_EMPTY(spaceCol) || IS_EQUAL(spaceCol, TREE_TRUNK) || IS_EQUAL(spaceCol, TREE_LEAVES))
+		{
+			treeStartY--;
+			spaceCol = NewFrame[int2(treeX, treeStartY - 1)];
+		}
+		int treeY = 0;
+		int treeHeight = 10;
+		for (; treeY < treeHeight; treeY++)
+		{
+			int2 branchPos = int2(treeX, treeY + treeStartY);
+			NewFrame[branchPos] = TREE_TRUNK;
+			if (treeY > 5 && rand(branchPos) && rand(branchPos, 1))
+			{
+				MakeTreeBranch(branchPos, rand(branchPos, 3));
+				treeHeight += 1;
+			}
+		}
+		for (int i = 0; i < 5; i++)
+		{
+			int2 noiseMove = int2((int)round(seedNoise(int2(treeX + 0.5, treeY + 1.5)) * 2), (int)round(-abs(seedNoise(int2(treeX + 0.5, treeY + 1.5)) * 2)));
+			bool rnd = rand(int2(treeX + 0.5, treeY + 1.5), i + 3);
+			if (rnd)
+			{
+				noiseMove.x = -abs(noiseMove.x);
+			}
+			else
+			{
+				noiseMove.x = abs(noiseMove.x);
+			}
+			MakeTreeBranch(int2(treeX, treeY + treeStartY) + noiseMove, rnd);
+		}
+	}
+	
+	for (int idx = 0; idx < 3; idx++)
+	{
+		for (int idy = 0; idy < 5; idy++)
+		{
+			float number = idx * 5 + idy;
+			float4 x = float4(number / 15.0, 0.1, 0.1, 1.0);
+			NewFrame[int2(idx, idy) + SHOP_PLACEMENT] = x;
+		}
+	}
+	
+	for (int i = -9; i < 3; i++)
+	{
+		int2 coord = SHOP_PLACEMENT + eee.yz + int2(i, 0);
+		NewFrame[coord] = BEDROCK;
+		while(IS_EMPTY(NewFrame[coord]))
+		{
+			NewFrame[coord] = BEDROCK;
+			coord += eee.yz;
+		}
+	}
+	
+	int2 coord = SHOP_PLACEMENT + eee.yz + int2(-10, 0);
+	while(IS_EMPTY(NewFrame[coord]))
+	{
+		NewFrame[coord] = LADDER;
+		coord += eee.yz;
+	}
+	coord = SHOP_PLACEMENT + eee.yz + int2(3, 0);
+	while(IS_EMPTY(NewFrame[coord]))
+	{
+		NewFrame[coord] = LADDER;
+		coord += eee.yz;
+	}
+}
+
+#pragma kernel TreenemySpawn
+[numthreads(MAPGEN_TREENEMY_COUNT, 1, 1)]
+void TreenemySpawn(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	NewFrame.GetDimensions(w, h);
+	int genSeed = seed * (id.x + 1);
+	int2 spawnPoint = int2((snoise(float2(genSeed + 0.5, 0.5)) + 1) * w / 2, (snoise(float2(0.5, genSeed + 0.5)) + 1) * h / 2);
+	NewFrame[spawnPoint] = TREENEMY_CORE_ASLEEP;
+	for (uint branchID = 0; branchID < MAPGEN_TREENEMY_BRANCH_COUNT; branchID++)
+	{
+		int2 branchCoords = spawnPoint;
+		int2 lastBranchDir = eee.yy;
+		for (uint branchLen = 0; branchLen < MAPGEN_TREENEMY_BRANCH_LENGTH; branchLen++)
+		{
+			float branchNoise = trunc((snoise(float2(genSeed + branchID * 21 + trunc(branchLen / 2) * 31 + 0.5, 0.5)) + 1) * 2);
+			int2 branchDir = eee.yz;
+			switch(branchNoise)
+			{
+				case 0:
+					branchDir = eee.xy;
+					break;
+				case 1:
+					branchDir = eee.yx;
+					break;
+				case 2:
+					branchDir = eee.zy;
+					break;
+			}
+			if (IS_EQUAL(lastBranchDir + branchDir, eee.yy))
+			{
+				branchDir = lastBranchDir;
+			}
+			branchCoords += branchDir;
+			lastBranchDir = branchDir;
+			if (!IS_TREENEMY_CORE(NewFrame[branchCoords]))
+			{
+				NewFrame[branchCoords] = TREENEMY_BRANCH_ASLEEP;
+			}
+		}
+	}
+}

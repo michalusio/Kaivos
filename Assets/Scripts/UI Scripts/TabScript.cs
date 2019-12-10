@@ -7,6 +7,10 @@ public class TabScript : MonoBehaviour
     public Button[] Buttons;
     public GameObject[] Panels;
 
+    public bool MainPanel;
+
+    public int PanelID { get; private set; }
+
     void Start()
     {
         int maxPanels = Mathf.Min(Buttons.Length, Panels.Length);
@@ -22,7 +26,18 @@ public class TabScript : MonoBehaviour
         SetActivePanel(0);
     }
 
-    void SetActivePanel(int panelID)
+    void Update()
+    {
+        if (MainPanel)
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                SetActivePanel((PanelID + 1) % Panels.Length);
+            }
+        }
+    }
+
+    public void SetActivePanel(int panelID)
     {
         foreach(var panel in Panels)
         {
@@ -34,5 +49,6 @@ public class TabScript : MonoBehaviour
             button.transform.SetAsFirstSibling();
         }
         Buttons[panelID].transform.SetAsLastSibling();
+        PanelID = panelID;
     }
 }

@@ -50,7 +50,8 @@ public class LoadScript : MonoBehaviour
         if (File.Exists(filePath))
         {
             fileData = File.ReadAllBytes(filePath);
-            tex = new Texture2D(2, 2);
+            tex = new Texture2D(2, 2, TextureFormat.RGBAFloat, false, false);
+            tex.Apply();
             tex.LoadImage(fileData);
         }
         return tex;

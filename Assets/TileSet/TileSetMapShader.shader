@@ -65,14 +65,14 @@
 			{
 				float id = junctionColor.x * 9;
 				float noise = (trunc(_Time.z * 8) % 8) * 3;
-				return float2(trunc(id / 3) + noise, 4 - trunc(id % 3)) * 4;
+				return float2(trunc(id / 3) + noise, 2 - trunc(id % 3)) * 4;
 			}
 			
 			float2 decodeForge(float4 forgeColor)
 			{
 				float id = forgeColor.x * 9;
-				float noise = (trunc(_Time.z * 8) % 8) * 3;
-				return float2(trunc(id / 3) + noise, 4 - trunc(id % 3)) * 4;
+				float noise = (trunc(_Time.z * 5) % 5) * 3;
+				return float2(trunc(id / 3) + noise, 2 - trunc(id % 3)) * 4;
 			}
 			
             float4 frag (v2f i) : SV_Target

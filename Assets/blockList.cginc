@@ -67,6 +67,9 @@
 #define JUNCTION_POS_START float2(0, 20)
 #define FORGE_POS_START float2(0, 32)
 
+#define JUNCTION_MID float4(4 / 9.0, 0.2, 0.1, 1.0)
+#define FORGE_MID float4(4 / 9.0, 0.3, 0.1, 1.0)
+
 #define IS_EQUAL(x, y) all(abs(x - y)<0.01)
 #define IS_EMPTY(x) (x.a < 0.5)
 #define IS_TRANSPARENT(x) (IS_EMPTY(x) || IS_EQUAL(x, TREE_LEAVES))

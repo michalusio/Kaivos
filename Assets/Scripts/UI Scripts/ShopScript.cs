@@ -1,92 +1,69 @@
-﻿using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 
 public class ShopScript : MonoBehaviour
 {
-    public int BeltCost = 2;
-    public int UpBeltCost = 2;
-    public int LadderCost = 5;
-    public int TorchCost = 10;
+    readonly Dictionary<ShopItemType, int> ShopItemCost = new Dictionary<ShopItemType, int>
+    {
+        {ShopItemType.RIGHT_BELT, 2},
+        {ShopItemType.LEFT_BELT, 2},
+        {ShopItemType.UP_BELT, 2},
+        {ShopItemType.LADDER, 5},
+        {ShopItemType.TORCH, 10}
+    };
+    readonly Dictionary<ShopItemType, int> ShopItemInvAmounts = new Dictionary<ShopItemType, int>
+    {
+        {ShopItemType.RIGHT_BELT, 0},
+        {ShopItemType.LEFT_BELT, 1},
+        {ShopItemType.UP_BELT, 2},
+        {ShopItemType.LADDER, 3},
+        {ShopItemType.TORCH, 4}
+    };
 
     public Text RightBeltCostText;
     public Text LeftBeltCostText;
     public Text UpBeltCostText;
     public Text LadderCostText;
     public Text TorchCostText;
-    private InventoryScript inventoryScript;
+    private InventoryScript _inventoryScript;
     
 
-    void Awake ()
+    void Awake()
     {
         GameObject mainObject = GameObject.Find("Main Object");
-        inventoryScript = mainObject.GetComponent<InventoryScript>();
+        _inventoryScript = mainObject.GetComponent<InventoryScript>();
 
-        RightBeltCostText.text = BeltCost.ToString() + '$';
-        LeftBeltCostText.text = BeltCost.ToString() + '$';
-        UpBeltCostText.text = UpBeltCost.ToString() + '$';
-        LadderCostText.text = LadderCost.ToString() + '$';
-        TorchCostText.text = TorchCost.ToString() + '$';
+        RightBeltCostText.text = ShopItemCost[ShopItemType.RIGHT_BELT].ToString() + '$';
+        LeftBeltCostText.text = ShopItemCost[ShopItemType.LEFT_BELT].ToString() + '$';
+        UpBeltCostText.text = ShopItemCost[ShopItemType.UP_BELT].ToString() + '$';
+        LadderCostText.text = ShopItemCost[ShopItemType.LADDER].ToString() + '$';
+        TorchCostText.text = ShopItemCost[ShopItemType.TORCH].ToString() + '$';
     }
 
-    public void BuyRBelt()
+    void BuyObject(ShopItemType type, int amount)
     {
-        string nRB = EventSystem.current.currentSelectedGameObject.name.Substring(5);
-        int numberRB = int.Parse(nRB);
-        int wholeCost = BeltCost * numberRB;
-        if (inventoryScript.Money.AddAmount(-wholeCost))
+        int wholeCost = ShopItemCost[type] * amount;
+        if (_inventoryScript.Money.AddAmount(-wholeCost))
         {
-            inventoryScript.BlockAmounts[0] += numberRB;
-            Debug.Log("Got RBelt " + numberRB);
+            _inventoryScript.BlockAmounts[ShopItemInvAmounts[type]] += amount;
+            Debug.Log($"Bought {amount} of {type} for {wholeCost}");
         }
     }
 
-    public void BuyLBelt()
-    {
-        string nLB = EventSystem.current.currentSelectedGameObject.name.Substring(5);
-        int numberLB = int.Parse(nLB);
-        int wholeCost = BeltCost * numberLB;
-        if (inventoryScript.Money.AddAmount(-wholeCost))
-        {
-            inventoryScript.BlockAmounts[1] += numberLB;
-            Debug.Log("Got LBelt " + numberLB);
-        }
-    }
+    public void BuyRightBelt(int amount) => BuyObject(ShopItemType.RIGHT_BELT, amount);
+    public void BuyLeftBelt(int amount) => BuyObject(ShopItemType.LEFT_BELT, amount);
+    public void BuyUpBelt(int amount) => BuyObject(ShopItemType.UP_BELT, amount);
+    public void BuyLadder(int amount) => BuyObject(ShopItemType.LADDER, amount);
+    public void BuyTorch(int amount) => BuyObject(ShopItemType.TORCH, amount);
+}
 
-    public void BuyUBelt()
-    {
-        string nU = EventSystem.current.currentSelectedGameObject.name.Substring(5);
-        int numberU = int.Parse(nU);
-        int wholeCost = UpBeltCost * numberU;
-        if (inventoryScript.Money.AddAmount(-wholeCost))
-        {
-            inventoryScript.BlockAmounts[2] += numberU;
-            Debug.Log("Got UBelt " + numberU);
-        }
-    }
-
-    public void BuyLadder()
-    {
-        string nL = EventSystem.current.currentSelectedGameObject.name.Substring(4);
-        int numberL = int.Parse(nL);
-        int wholeCost = LadderCost * numberL;
-        if (inventoryScript.Money.AddAmount(-wholeCost))
-        {
-            inventoryScript.BlockAmounts[3] += numberL;
-            Debug.Log("Got Ladder " + numberL);
-        }
-    }
-
-    public void BuyTorch()
-    {
-        string nT = EventSystem.current.currentSelectedGameObject.name.Substring(4);
-        int numberT = int.Parse(nT);
-        int wholeCost = TorchCost * numberT;
-        if (inventoryScript.Money.AddAmount(-wholeCost))
-        {
-            inventoryScript.BlockAmounts[4] += numberT;
-            Debug.Log("Got Torch " + numberT);
-        }
-    }
+public enum ShopItemType
+{
+    RIGHT_BELT,
+    LEFT_BELT,
+    UP_BELT,
+    LADDER,
+    TORCH
 }
