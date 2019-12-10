@@ -16,7 +16,8 @@ public class UpgradeObjectScript : MonoBehaviour
     public Button Button3;
     public Button Button4;
     public Button Button5;
-    public Text Cost;
+    private string Cost;
+    public Text CostShow;
 
     private int currentCell = 0;
     
@@ -29,7 +30,7 @@ public class UpgradeObjectScript : MonoBehaviour
         inventoryScript = mainObject.GetComponent<InventoryScript>();
         miningScript = mainObject.GetComponent<MiningScript>();
 
-        Cost.text = Upgrade[0].ToString() + '$';
+        Cost = Upgrade[0].ToString() + '$';
         
         Button2.interactable = false;
         Button3.interactable = false;
@@ -41,14 +42,18 @@ public class UpgradeObjectScript : MonoBehaviour
         buttonu1.GetComponent<Image>().color=Color.green;
         buttonu1.interactable = false;
         buttonu1.enabled=false;
-        Cost.text = "MAX";
+        Cost = "MAX";
         upgradeLevel();
         currentCell += 1;
         if (Upgrade[currentCell]!=0){
         buttonu2.GetComponent<Image>().color=Color.white;
         buttonu2.interactable = true;
-        Cost.text = (Upgrade[currentCell]).ToString() + '$';
+        Cost = (Upgrade[currentCell]).ToString() + '$';
         }
+    }
+    public void ShowCost()
+    {
+        CostShow.text = Cost;
     }
     public void upgradeLevel ()
     {
