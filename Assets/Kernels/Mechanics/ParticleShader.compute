@@ -164,5 +164,57 @@ void Machines(uint3 id : SV_DispatchThreadID)
 			NewFrame[id.xy + int2(-2, 0)] = NewFrame[id.xy + int2(2, 0)];
 			NewFrame[id.xy + int2(2, 0)] = 0;
 		}
+		if (IS_MOVABLE(NewFrame[id.xy + int2(0, -2)]) && IS_EMPTY(NewFrame[id.xy + int2(0, 2)]))
+		{
+			NewFrame[id.xy + int2(0, 2)] = NewFrame[id.xy + int2(0, -2)];
+			NewFrame[id.xy + int2(0, -2)] = 0;
+		}
+		else if (IS_MOVABLE(NewFrame[id.xy + int2(0, 2)]) && IS_EMPTY(NewFrame[id.xy + int2(0, -2)]))
+		{
+			NewFrame[id.xy + int2(0, -2)] = NewFrame[id.xy + int2(0, 2)];
+			NewFrame[id.xy + int2(0, 2)] = 0;
+		}
+	}
+	if (IS_EQUAL(NewFrame[id.xy], FORGE_MID))
+	{
+		for (int dx = 0; dx < 3; dx++)
+		{
+			for (int dy = 0; dy < 3; dy++)
+			{
+				if (!IS_EQUAL(NewFrame[id.xy + int2(dx - 1, dy - 1)], float4((dx * 3 + dy) / 9.0, 0.3, 0.1, 1.0))) return;
+			}
+		}
+		
+		float4 forged = float4(0, 0, 0, 0);
+		if (IS_EQUAL(NewFrame[id.xy + int2(0, 2)], MINED(IRON)))
+		{
+			forged = IRON_BAR;
+		}
+		else if (IS_EQUAL(NewFrame[id.xy + int2(0, 2)], MINED(COPPER)))
+		{
+			forged = COPPER_BAR;
+		}
+		else if (IS_EQUAL(NewFrame[id.xy + int2(0, 2)], MINED(GOLD)))
+		{
+			forged = GOLD_BAR;
+		}
+		else if (IS_EQUAL(NewFrame[id.xy + int2(0, 2)], IRON_BAR))
+		{
+			forged = STEEL_BAR;
+		}
+		if (IS_EQUAL(forged, float4(0, 0, 0, 0))) return;
+		
+		if (IS_EMPTY(NewFrame[id.xy + int2(-2, -1)]) && IS_EQUAL(NewFrame[id.xy + int2(2, -1)], MINED(COAL)))
+		{
+			NewFrame[id.xy + int2(-2, -1)] = forged;
+			NewFrame[id.xy + int2(2, -1)] = 0;
+			NewFrame[id.xy + int2(0, 2)] = 0;
+		}
+		else if (IS_EMPTY(NewFrame[id.xy + int2(2, -1)]) && IS_EQUAL(NewFrame[id.xy + int2(-2, -1)], MINED(COAL)))
+		{
+			NewFrame[id.xy + int2(2, -1)] = forged;
+			NewFrame[id.xy + int2(-2, -1)] = 0;
+			NewFrame[id.xy + int2(0, 2)] = 0;
+		}
 	}
 }

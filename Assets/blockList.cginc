@@ -1,5 +1,8 @@
 #define SQRT2 1.41421356237
-#define ORE_SIZE 60.0
+#define MAPGEN_IRON_ORE_SIZE 60.0
+#define MAPGEN_COAL_ORE_SIZE 100.0
+#define MAPGEN_COPPER_ORE_SIZE 60.0
+#define MAPGEN_GOLD_ORE_SIZE 40.0
 #define MAPGEN_IRON_H 0.5
 #define MAPGEN_COAL_H 0.5
 #define MAPGEN_COPPER_H 0.2
@@ -62,6 +65,15 @@
 #define TREENEMY_CORE_POS float2(0, 168)
 #define TREENEMY_BRANCH_POS float2(0, 124)
 
+#define COPPER_BAR float4(0.0, 0.0, 0.9, 1.0)
+#define IRON_BAR float4(0.1, 0.0, 0.9, 1.0)
+#define GOLD_BAR float4(0.2, 0.0, 0.9, 1.0)
+#define STEEL_BAR float4(0.3, 0.0, 0.9, 1.0)
+#define COPPER_BAR_POS float2(0, 212)
+#define IRON_BAR_POS float2(0, 220)
+#define GOLD_BAR_POS float2(0, 216)
+#define STEEL_BAR_POS float2(0, 224)
+
 #define SHOP_POS_START float2(0, 0)
 #define SHOP_PLACEMENT int2(508, 1000)
 #define JUNCTION_POS_START float2(0, 20)
@@ -70,10 +82,13 @@
 #define JUNCTION_MID float4(4 / 9.0, 0.2, 0.1, 1.0)
 #define FORGE_MID float4(4 / 9.0, 0.3, 0.1, 1.0)
 
+#define MINED(u) (float4(u.x, 0.5, 0.5, 1.0))
+
 #define IS_EQUAL(x, y) all(abs(x - y)<0.01)
 #define IS_EMPTY(x) (x.a < 0.5)
 #define IS_TRANSPARENT(x) (IS_EMPTY(x) || IS_EQUAL(x, TREE_LEAVES))
-
+#define IS_STRUCTURE(u) (IS_SHOP(u) || IS_JUNCTION(u) || IS_FORGE(u))
+#define IS_COMPONENT(u) IS_EQUAL(u.zw, float2(0.9, 1.0))
 #define IS_TREENEMY_CORE(u) IS_EQUAL(u.xzw, float3(0.0, 0.8, 1.0))
 #define IS_TREENEMY_BRANCH(u) IS_EQUAL(u.xzw, float3(0.1, 0.8, 1.0))
 #define IS_TREENEMY_TRIGGER(u) (abs(u.y - 1.0) < 0.05)
@@ -88,4 +103,4 @@
 #define IS_MINED(x) IS_EQUAL(x.yzw, float3(0.5, 0.5, 1.0))
 #define IS_BELT(x) IS_EQUAL(x.yzw, float3(0.6, 0.6, 1.0))
 #define IS_ANIMATED(x) (IS_LIQUID(x) || IS_BELT(x) || IS_EQUAL(x, TORCH))
-#define IS_MOVABLE(x) (IS_LIQUID(x) || IS_MINED(x))
+#define IS_MOVABLE(x) (IS_LIQUID(x) || IS_MINED(x) || IS_COMPONENT(x))

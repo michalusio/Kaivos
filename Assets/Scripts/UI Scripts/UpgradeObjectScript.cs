@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public class UpgradeObjectScript : MonoBehaviour
 {
@@ -59,7 +56,7 @@ public class UpgradeObjectScript : MonoBehaviour
     {
         if (CurrentUpgradeType == UpgradeType.MineS)
         {
-            miningScript.MineSpeed += UpgradeValue[currentCell];
+            miningScript.MineSpeed -= UpgradeValue[currentCell];
             Debug.Log(miningScript.MineSpeed);
         }
         else if (CurrentUpgradeType == UpgradeType.MineA)

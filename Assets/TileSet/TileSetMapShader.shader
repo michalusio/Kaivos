@@ -77,6 +77,14 @@
 			
             float4 frag (v2f i) : SV_Target
             {
+				float2 position = trunc(i.uv * _Sizes.xy);
+				float2 parallaxPos = trunc(_PlayerPos.xy * 4) * PARALLAX_SCALE / 4;
+				float3 coordTable = float3(1.0 / _Sizes.x, 0, 1.0 / _Sizes.y);
+				float4 colAbove = tex2D(_MainTex, i.uv + coordTable.yz);
+				float4 colLeft = tex2D(_MainTex, i.uv - coordTable.xy);
+				float4 colRight = tex2D(_MainTex, i.uv + coordTable.xy);
+				float4 colBelow = tex2D(_MainTex, i.uv - coordTable.yz);
+				
                 float4 col = tex2D(_MainTex, i.uv);
 				float4 shadow = saturate(tex2D(_ShadowTex, i.uv));
 				float2 pos = float2(0, 0);
@@ -162,23 +170,33 @@
 				{
 					pos = TREE_LEAVES_POS;
 				}
+				else if (IS_EQUAL(col, IRON_BAR))
+				{
+					pos = IRON_BAR_POS;
+				}
+				else if (IS_EQUAL(col, COPPER_BAR))
+				{
+					pos = COPPER_BAR_POS;
+				}
+				else if (IS_EQUAL(col, GOLD_BAR))
+				{
+					pos = GOLD_BAR_POS;
+				}
+				else if (IS_EQUAL(col, STEEL_BAR))
+				{
+					pos = STEEL_BAR_POS;
+				}
 				else if (IS_SHOP(col))
 				{
 					pos = SHOP_POS_START + decodeShop(col);
-					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y)) / _Sizes2.xy);
-					return col * shadow;
 				}
 				else if (IS_JUNCTION(col))
 				{
 					pos = JUNCTION_POS_START + decodeJunction(col);
-					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y)) / _Sizes2.xy);
-					return col * shadow;
 				}
 				else if (IS_FORGE(col))
 				{
 					pos = FORGE_POS_START + decodeForge(col);
-					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y)) / _Sizes2.xy);
-					return col * shadow;
 				}
 				else if (IS_TREENEMY(col))
 				{
@@ -186,11 +204,36 @@
 				}
 				else return col * shadow;
 				
-				float3 coordTable = float3(1.0 / _Sizes.x, 0, 1.0 / _Sizes.y);
-				float4 colAbove = tex2D(_MainTex, i.uv + coordTable.yz);
-				float4 colLeft = tex2D(_MainTex, i.uv - coordTable.xy);
-				float4 colRight = tex2D(_MainTex, i.uv + coordTable.xy);
-				float4 colBelow = tex2D(_MainTex, i.uv - coordTable.yz);
+				if (IS_STRUCTURE(col))
+				{
+					col = tex2D(_MachineTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x, _Sizes2.y - 4 - pos.y)) / _Sizes2.xy);
+					if (IS_EQUAL(colRight, LAVA) || IS_EQUAL(colLeft, LAVA) || IS_EQUAL(colAbove, LAVA))
+					{
+						float noise = trunc((snoise(position) + 1) * 4) * 4 + trunc(_Time.z * 5) * 4;
+						pos = LAVA_POS;
+						position = trunc(i.uv * _Sizes.xy);
+						float4 emptyCol = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+						return float4(lerp(emptyCol.rgb, col.rgb, step(0.5, col.a)), 1.0) * shadow;
+					}
+					if (IS_EQUAL(colRight, WATER) || IS_EQUAL(colLeft, WATER) || IS_EQUAL(colAbove, WATER))
+					{
+						float noise = trunc((snoise(position) + 1) * 4) * 4 + trunc(_Time.z * 5) * 4;
+						pos = WATER_POS;
+						position = trunc(i.uv * _Sizes.xy);
+						float4 emptyCol = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4) % 4) + float2(pos.x + noise, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+						return float4(lerp(emptyCol.rgb, col.rgb, step(0.5, col.a)), 1.0) * shadow;
+					}
+					if (i.uv.y * _Sizes.y < 981)
+					{
+						pos = EMPTY_POS;
+						position = trunc(i.uv * _Sizes.xy - parallaxPos/4);
+						float4 emptyCol = tex2D(_TileTex, (((i.uv * _Sizes.xy * 4 - parallaxPos) % 4) + float2(pos.x + trunc((snoise(position) + 1) * 4) * 4, _Sizes.w - 4 - pos.y))/_Sizes.zw);
+						return float4(lerp(emptyCol.rgb, col.rgb, step(0.5, col.a)), 1.0) * shadow;
+					}
+					return col * shadow;
+				}
+				
+				
 				
 				if (wasMined)
 				{
@@ -223,9 +266,8 @@
 						}
 					}
 				}
-				float2 parallaxPos = trunc(_PlayerPos.xy * 4) * PARALLAX_SCALE / 4;
+				
 				float noise;
-				float2 position = trunc(i.uv * _Sizes.xy);
 				if (IS_ANIMATED(col))
 				{
 					noise = trunc(_Time.z * 5) * 4;

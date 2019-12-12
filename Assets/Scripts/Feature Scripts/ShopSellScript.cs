@@ -61,5 +61,10 @@ public class ShopSellScript : MonoBehaviour
         (new Color(0.1f, 0.4f, 0.4f, 1.0f), 20),
         (new Color(0.2f, 0.4f, 0.4f, 1.0f), 15),
         (new Color(0.3f, 0.4f, 0.4f, 1.0f), 30),
+
+        (new Color(0.0f, 0.0f, 0.9f, 1.0f), 50),
+        (new Color(0.1f, 0.0f, 0.9f, 1.0f), 70),
+        (new Color(0.2f, 0.0f, 0.9f, 1.0f), 110),
+        (new Color(0.3f, 0.0f, 0.9f, 1.0f), 150),
     };
 }

@@ -19,10 +19,10 @@ void GenerateTerrain(uint3 id : SV_DispatchThreadID)
 			{
 				float heightPart = (h - id.y)/(float)h;
 				
-				float ironNoise = max(0, seedNoise(id.xy/ORE_SIZE+40)) * (1-(heightPart-MAPGEN_IRON_H)*(heightPart-MAPGEN_IRON_H));
-				float coalNoise = max(0, seedNoise(id.xy/ORE_SIZE+60)) * (1-(heightPart-MAPGEN_COAL_H)*(heightPart-MAPGEN_COAL_H));
-				float copperNoise = max(0, seedNoise(id.xy/ORE_SIZE+80)) * (1-(heightPart-MAPGEN_COPPER_H)*(heightPart-MAPGEN_COPPER_H));
-				float goldNoise = max(0, 0.8 * seedNoise(id.xy/ORE_SIZE+100)) * (1-(heightPart-MAPGEN_GOLD_H)*(heightPart-MAPGEN_GOLD_H));
+				float ironNoise = max(0, seedNoise(id.xy/MAPGEN_IRON_ORE_SIZE+40)) * (1-(heightPart-MAPGEN_IRON_H)*(heightPart-MAPGEN_IRON_H));
+				float coalNoise = max(0, seedNoise(id.xy/MAPGEN_COAL_ORE_SIZE+60)) * (1-(heightPart-MAPGEN_COAL_H)*(heightPart-MAPGEN_COAL_H));
+				float copperNoise = max(0, seedNoise(id.xy/MAPGEN_COPPER_ORE_SIZE+80)) * (1-(heightPart-MAPGEN_COPPER_H)*(heightPart-MAPGEN_COPPER_H));
+				float goldNoise = max(0, seedNoise(id.xy/MAPGEN_GOLD_ORE_SIZE+100)) * (1-(heightPart-MAPGEN_GOLD_H)*(heightPart-MAPGEN_GOLD_H));
 				float maxNoise = max(max(max(ironNoise,coalNoise),copperNoise),goldNoise);
 				if (maxNoise > 0.7)
 				{
