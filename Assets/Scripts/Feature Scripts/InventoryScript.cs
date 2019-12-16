@@ -16,7 +16,6 @@ public partial class InventoryScript : MonoBehaviour
     [SerializeField] public TextMult[] BlockSlotAmounts;
     
     public MoneyController Money { get; private set; } = 100000;
-    //public MoneyController Money { get; private set; } = 1000;
 
     private (int Tab, int Slot) chosenSlot;
     public (int Tab, int Slot) ChosenSlot
@@ -34,10 +33,11 @@ public partial class InventoryScript : MonoBehaviour
                     img.color = Color.gray;
                 }
             }
-            chosenSlot = value;
+            
             if (value.Tab >= 0 && BlockSlots.Length > value.Tab && BlockSlots[value.Tab].Length > value.Slot && BlockSlots[value.Tab][value.Slot].enabled)
             {
                 BlockSlots[value.Tab][value.Slot].color = Color.white;
+                chosenSlot = value;
             }
         }
     }

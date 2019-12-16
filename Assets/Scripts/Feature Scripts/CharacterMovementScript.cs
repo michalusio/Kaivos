@@ -50,7 +50,7 @@ public class CharacterMovementScript : MonoBehaviour
             transform.position = new Vector3(transform.position.x, transform.position.y + mainScriptComponent.mainTexture.height * 2, transform.position.z);
         }
         
-        if (Input.GetKeyUp(KeyCode.LeftControl))
+        if (Input.GetKeyUp(KeyCode.LeftControl) && Debug.isDebugBuild)
         {
             if (mainScriptComponent.MAP_SCALING == 4)
             {
