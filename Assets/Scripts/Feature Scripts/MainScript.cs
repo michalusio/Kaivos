@@ -8,6 +8,9 @@ public class MainScript : MonoBehaviour
     [Range(1, 6)]
     public int MAP_SCALING = 4;
 
+    [Range(0.1f, 1)]
+    public float MachineSpeed = 1;
+
     public bool TileSetOn = true;
 
     public ComputeShader ParticleShader;
@@ -20,6 +23,7 @@ public class MainScript : MonoBehaviour
     private const int MAP_SIZE = 1024;
 
     private float timeSinceLastPhysics;
+    private float timeSinceLastMachine;
 
     void Start()
     {
@@ -111,7 +115,8 @@ public class MainScript : MonoBehaviour
     void Update()
     {
         timeSinceLastPhysics += Time.deltaTime;
-        while (timeSinceLastPhysics > 0.1f)
+        timeSinceLastMachine += Time.deltaTime;
+        while (timeSinceLastPhysics >= 0.1f)
         {
             timeSinceLastPhysics -= 0.1f;
             
@@ -120,9 +125,29 @@ public class MainScript : MonoBehaviour
             SwitchTextures();
         }
 
+        while (timeSinceLastMachine >= MachineSpeed)
+        {
+            timeSinceLastMachine -= MachineSpeed;
+
+            SetupMachineShader();
+            DispatchMachineShader();
+        }
+
         ShadowShader.SetFloat("Time", Time.realtimeSinceStartup);
         ShadowShader.SetTexture(0, "Frame", mainTexturePrevFrame);
         ShadowShader.Dispatch(0, mainTexture.width / 16, mainTexture.height / 16, 1);
+    }
+
+    private void SetupMachineShader()
+    {
+        ParticleShader.SetFloat("Time", Time.realtimeSinceStartup);
+        ParticleShader.SetTexture(2, "NewFrame", mainTexturePrevFrame);
+        ParticleShader.SetTexture(2, "FrameBefore", mainTexture);
+    }
+
+    private void DispatchMachineShader()
+    {
+        ParticleShader.Dispatch(2, mainTexture.width / 16, mainTexture.height / 16, 1);
     }
 
     private void SetupUpdateShaders()
@@ -132,8 +157,6 @@ public class MainScript : MonoBehaviour
         ParticleShader.SetTexture(0, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.SetTexture(1, "NewFrame", mainTexture);
         ParticleShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
-        ParticleShader.SetTexture(2, "NewFrame", mainTexture);
-        ParticleShader.SetTexture(2, "FrameBefore", mainTexturePrevFrame);
 
         BeltShader.SetFloat("Time", Time.realtimeSinceStartup);
         BeltShader.SetTexture(0, "NewFrame", mainTexture);
@@ -148,7 +171,6 @@ public class MainScript : MonoBehaviour
     {
         ParticleShader.Dispatch(0, mainTexture.width / 256, 1, 1);
         ParticleShader.Dispatch(1, mainTexture.width / 16, mainTexture.height / 16, 1);
-        ParticleShader.Dispatch(2, mainTexture.width / 16, mainTexture.height / 16, 1);
 
         BeltShader.Dispatch(0, 1, mainTexture.height / 256, 1);
         BeltShader.Dispatch(1, 1, mainTexture.height / 256, 1);

@@ -5,7 +5,7 @@ public class UpgradeObjectScript : MonoBehaviour
 {
     public int[] Upgrade = new int[6];
     public float[] UpgradeValue = new float[6];
-    public enum UpgradeType {MineS , MineA , MachineS, Jetpack, Teleporter, None};
+    public enum UpgradeType { MineS , MineA , MachineS, Jetpack, Teleporter, None };
 
     public UpgradeType CurrentUpgradeType = UpgradeType.None;
     public Button Button1;
@@ -20,12 +20,14 @@ public class UpgradeObjectScript : MonoBehaviour
     
     private InventoryScript inventoryScript;
     private MiningScript miningScript;
+    private MainScript mainScript;
     
-    void Awake ()
+    void Awake()
     {
         GameObject mainObject = GameObject.Find("Main Object");
         inventoryScript = mainObject.GetComponent<InventoryScript>();
         miningScript = mainObject.GetComponent<MiningScript>();
+        mainScript = mainObject.GetComponent<MainScript>();
 
         Cost = Upgrade[0].ToString() + '$';
         
@@ -34,25 +36,29 @@ public class UpgradeObjectScript : MonoBehaviour
         Button4.interactable = false;
         Button5.interactable = false;
     }
-    public void upgradeButtons (Button buttonu1, Button buttonu2)
+
+    public void UpgradeButtons(Button buttonu1, Button buttonu2)
     {
         buttonu1.GetComponent<Image>().color=Color.green;
         buttonu1.interactable = false;
-        buttonu1.enabled=false;
+        buttonu1.enabled = false;
         Cost = "MAX";
-        upgradeLevel();
+        UpgradeLevel();
         currentCell += 1;
-        if (Upgrade[currentCell]!=0){
-        buttonu2.GetComponent<Image>().color=Color.white;
-        buttonu2.interactable = true;
-        Cost = (Upgrade[currentCell]).ToString() + '$';
+        if (Upgrade[currentCell] != 0)
+        {
+            buttonu2.GetComponent<Image>().color=Color.white;
+            buttonu2.interactable = true;
+            Cost = Upgrade[currentCell].ToString() + '$';
         }
     }
+
     public void ShowCost()
     {
         CostShow.text = Cost;
     }
-    public void upgradeLevel ()
+
+    public void UpgradeLevel()
     {
         if (CurrentUpgradeType == UpgradeType.MineS)
         {
@@ -66,7 +72,7 @@ public class UpgradeObjectScript : MonoBehaviour
         }
         else if (CurrentUpgradeType == UpgradeType.MachineS)
         {
-            //upgrade MachineS
+            mainScript.MachineSpeed -= UpgradeValue[currentCell];
         }
         else if (CurrentUpgradeType == UpgradeType.Jetpack)
         {
@@ -81,25 +87,25 @@ public class UpgradeObjectScript : MonoBehaviour
     {
         if (inventoryScript.Money.AddAmount(-Upgrade[currentCell]))
         {
-            if(currentCell == 0)
+            if (currentCell == 0)
             {
-                upgradeButtons (Button1, Button2);
+                UpgradeButtons(Button1, Button2);
             }
             else if(currentCell == 1)
             {
-                upgradeButtons (Button2, Button3);
+                UpgradeButtons(Button2, Button3);
             }
             else if(currentCell == 2)
             {
-                upgradeButtons (Button3, Button4);
+                UpgradeButtons(Button3, Button4);
             }
             else if(currentCell == 3)
             {
-                upgradeButtons (Button4, Button5);
+                UpgradeButtons(Button4, Button5);
             }
             else
             {
-                upgradeButtons (Button5, Button5);
+                UpgradeButtons(Button5, Button5);
             }
         }
             
