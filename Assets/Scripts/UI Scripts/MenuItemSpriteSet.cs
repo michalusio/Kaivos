@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -63,10 +64,12 @@ public class MenuItemSpriteSet : MonoBehaviour
 
     void Start()
     {
-        var drawingScript = FindObjectOfType<DrawingScript>();
         var image = GetComponent<RawImage>();
-        var tileTexture = drawingScript.TileSetMapMaterial.GetTexture("_TileTex");
-        image.uvRect = new Rect(0, (tileTexture.height - 4 - (float)BlockTypeY[SetTo])/tileTexture.height, 4f/tileTexture.width, 4f/tileTexture.height);
+        if (ClassManager.DrawingScript != null)
+        {
+            var tileTexture = ClassManager.DrawingScript.TileSetMapMaterial.GetTexture("_TileTex");
+            image.uvRect = new Rect(0, (tileTexture.height - 4 - (float)BlockTypeY[SetTo])/tileTexture.height, 4f/tileTexture.width, 4f/tileTexture.height);
+        }
     }
 
     void Update()

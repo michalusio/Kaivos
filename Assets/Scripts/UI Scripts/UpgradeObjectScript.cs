@@ -39,7 +39,7 @@ public class UpgradeObjectScript : MonoBehaviour
 
     public void UpgradeButtons(Button buttonu1, Button buttonu2)
     {
-        buttonu1.GetComponent<Image>().color=Color.green;
+        buttonu1.GetComponent<Image>().color = Color.green;
         buttonu1.interactable = false;
         buttonu1.enabled = false;
         Cost = "MAX";
@@ -47,7 +47,7 @@ public class UpgradeObjectScript : MonoBehaviour
         currentCell += 1;
         if (Upgrade[currentCell] != 0)
         {
-            buttonu2.GetComponent<Image>().color=Color.white;
+            buttonu2.GetComponent<Image>().color = Color.white;
             buttonu2.interactable = true;
             Cost = Upgrade[currentCell].ToString() + '$';
         }
@@ -60,52 +60,46 @@ public class UpgradeObjectScript : MonoBehaviour
 
     public void UpgradeLevel()
     {
-        if (CurrentUpgradeType == UpgradeType.MineS)
+        switch (CurrentUpgradeType)
         {
-            miningScript.MineSpeed -= UpgradeValue[currentCell];
-            Debug.Log(miningScript.MineSpeed);
-        }
-        else if (CurrentUpgradeType == UpgradeType.MineA)
-        {
-            miningScript.MineSize = (int)UpgradeValue[currentCell];
-            Debug.Log(miningScript.MineSize);
-        }
-        else if (CurrentUpgradeType == UpgradeType.MachineS)
-        {
-            mainScript.MachineSpeed -= UpgradeValue[currentCell];
-        }
-        else if (CurrentUpgradeType == UpgradeType.Jetpack)
-        {
-            //upgrade Jetpack
-        }
-        else if (CurrentUpgradeType == UpgradeType.Teleporter)
-        {
-            //upgrade Telep
+            case UpgradeType.MineS:
+                miningScript.MineSpeed -= UpgradeValue[currentCell];
+                break;
+            case UpgradeType.MineA:
+                miningScript.MineSize = (int)UpgradeValue[currentCell];
+                break;
+            case UpgradeType.MachineS:
+                mainScript.MachineSpeed -= UpgradeValue[currentCell];
+                break;
+            case UpgradeType.Jetpack:
+
+                break;
+            case UpgradeType.Teleporter:
+
+                break;
         }
     }
     public void BuyUpgrade()
     {
         if (inventoryScript.Money.AddAmount(-Upgrade[currentCell]))
         {
-            if (currentCell == 0)
+            switch (currentCell)
             {
-                UpgradeButtons(Button1, Button2);
-            }
-            else if(currentCell == 1)
-            {
-                UpgradeButtons(Button2, Button3);
-            }
-            else if(currentCell == 2)
-            {
-                UpgradeButtons(Button3, Button4);
-            }
-            else if(currentCell == 3)
-            {
-                UpgradeButtons(Button4, Button5);
-            }
-            else
-            {
-                UpgradeButtons(Button5, Button5);
+                case 0:
+                    UpgradeButtons(Button1, Button2);
+                    break;
+                case 1:
+                    UpgradeButtons(Button2, Button3);
+                    break;
+                case 2:
+                    UpgradeButtons(Button3, Button4);
+                    break;
+                case 3:
+                    UpgradeButtons(Button4, Button5);
+                    break;
+                default:
+                    UpgradeButtons(Button5, Button5);
+                    break;
             }
         }
             

@@ -52,6 +52,8 @@
 #define BELT_LEFT_POS float2(0, 108)
 #define BELT_RIGHT_POS float2(0, 112)
 #define BELT_UP_POS float2(0, 116)
+#define BELT_LEFT_JOINED_POS float2(0, 240)
+#define BELT_RIGHT_JOINED_POS float2(0, 244)
 
 #define WATER float4(0, 0.7, 0.7, 1.0)
 #define LAVA float4(1, 0.7, 0.7, 1.0)

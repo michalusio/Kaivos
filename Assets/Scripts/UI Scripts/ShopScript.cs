@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,13 +34,10 @@ public class ShopScript : MonoBehaviour
     public Text TorchCostText;
     public Text JunctionCostText;
     public Text ForgeCostText;
-    private InventoryScript _inventoryScript;
-    
 
     void Awake()
     {
         GameObject mainObject = GameObject.Find("Main Object");
-        _inventoryScript = mainObject.GetComponent<InventoryScript>();
 
         RightBeltCostText.text = ShopItemCost[ShopItemType.RIGHT_BELT].ToString() + '$';
         LeftBeltCostText.text = ShopItemCost[ShopItemType.LEFT_BELT].ToString() + '$';
@@ -53,9 +51,9 @@ public class ShopScript : MonoBehaviour
     void BuyObject(ShopItemType type, int amount)
     {
         int wholeCost = ShopItemCost[type] * amount;
-        if (_inventoryScript.Money.AddAmount(-wholeCost))
+        if (ClassManager.InventoryScript.Money.AddAmount(-wholeCost))
         {
-            _inventoryScript.BlockAmounts[ShopItemInvAmounts[type]] += amount;
+            ClassManager.InventoryScript.BlockAmounts[ShopItemInvAmounts[type]] += amount;
             Debug.Log($"Bought {amount} of {type} for {wholeCost}");
         }
     }

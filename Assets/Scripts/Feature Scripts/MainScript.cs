@@ -1,9 +1,13 @@
 ﻿using System.IO;
+using Assets.Scripts;
 using UnityEngine;
 
 public class MainScript : MonoBehaviour
 {
     public static string LoadPath = null;
+    public SaveStateStats LoadSaveState;
+
+    public int Seed { get; private set; }
 
     [Range(1, 6)]
     public int MAP_SCALING = 4;
@@ -20,7 +24,7 @@ public class MainScript : MonoBehaviour
 
     public RenderTexture mainTexture, mainTexturePrevFrame, shadowTexture;
     
-    private const int MAP_SIZE = 1024;
+    public const int MAP_SIZE = 1024;
 
     private float timeSinceLastPhysics;
     private float timeSinceLastMachine;
@@ -29,6 +33,7 @@ public class MainScript : MonoBehaviour
     {
         if (LoadPath == null)
         {
+            Seed = Random.Range(0, 10000);
             mainTexture = new RenderTexture(MAP_SIZE, MAP_SIZE, 0, RenderTextureFormat.ARGBFloat)
             {
                 anisoLevel = 0,
@@ -49,9 +54,11 @@ public class MainScript : MonoBehaviour
         }
         else
         {
-            var loadTexture = LoadScript.LoadPNG(Path.Combine(LoadPath, "map.png"));
+            LoadSaveState = LoadScript.LoadSaveState(Path.Combine(LoadPath, SaveUtilities.StatFileName));
+            var loadTexture = LoadScript.LoadTextureData(Path.Combine(LoadPath, SaveUtilities.MapFileName));
             mainTexture = LoadScript.FromTexture2D(loadTexture);
             mainTexturePrevFrame = LoadScript.FromTexture2D(loadTexture);
+            Seed = LoadSaveState.Seed;
         }
 
         shadowTexture = new RenderTexture(mainTexture.width, mainTexture.height, 0, RenderTextureFormat.ARGBFloat)
@@ -62,11 +69,10 @@ public class MainScript : MonoBehaviour
             filterMode = FilterMode.Bilinear
         };
         shadowTexture.Create();
-
-        int seed = Random.Range(0, 10000);
-        PlaceShader.SetInt("seed", seed);
-        ParticleShader.SetInt("seed", seed);
-        BeltShader.SetInt("seed", seed);
+        
+        PlaceShader.SetInt("seed", Seed);
+        ParticleShader.SetInt("seed", Seed);
+        BeltShader.SetInt("seed", Seed);
 
         SetupShaderTextures();
 
@@ -76,6 +82,9 @@ public class MainScript : MonoBehaviour
         }
 
         ShadowShader.Dispatch(1, 1, 1, 1);
+
+        ClassManager.MainScript = this;
+        ClassManager.MapReadService = new MapReadService();
     }
 
     private void SetupShaderTextures()

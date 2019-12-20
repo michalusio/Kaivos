@@ -7,8 +7,6 @@ using MachineInfo = System.ValueTuple<int, int, int, int>;
 [ExecuteAlways]
 public class MenuMachineItemSpriteSet : MonoBehaviour
 {
-    
-
     public MachineType SetTo;
 
     public enum MachineType

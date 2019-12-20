@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class CheatScript : MonoBehaviour
@@ -6,7 +7,6 @@ public class CheatScript : MonoBehaviour
     public GameObject[] DebugObjects;
 
     private GameObject canvas;
-    
 
     void Start()
     {
@@ -30,7 +30,7 @@ public class CheatScript : MonoBehaviour
 
     public void ToggleInstaMine(Toggle change)
     {
-        FindObjectOfType<MiningScript>().InstaMine = change.isOn;
+        ClassManager.MiningScript.InstaMine = change.isOn;
     }
 
     public void ToggleMaxView(Toggle change)
@@ -48,11 +48,11 @@ public class CheatScript : MonoBehaviour
 
     public void ToggleInfiniteInventory(Toggle change)
     {
-        FindObjectOfType<InventoryScript>().InfiniteInventory = change.isOn;
+        ClassManager.InventoryScript.InfiniteInventory = change.isOn;
     }
 
     public void ToggleTileSet(Toggle change)
     {
-        FindObjectOfType<MainScript>().TileSetOn = !change.isOn;
+        ClassManager.MainScript.TileSetOn = !change.isOn;
     }
 }

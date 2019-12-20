@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Assets.Scripts;
 using UnityEngine;
@@ -6,8 +7,6 @@ using UnityEngine.UI;
 
 public class SaveScript : MonoBehaviour
 {
-    public MainScript mainScript;
-    public InventoryScript inventoryScript;
     public GameObject ContentPanel;
     public InputField SaveNameInput;
 
@@ -72,14 +71,25 @@ public class SaveScript : MonoBehaviour
         }
         var savePath = Path.Combine(SaveUtilities.GetSaveFolderPath(), saveName + Path.DirectorySeparatorChar);
         Directory.CreateDirectory(savePath);
-        var mapPath = Path.Combine(savePath, "map.png");
-        var statPath = Path.Combine(savePath, "stats.json");
+        var mapPath = Path.Combine(savePath, SaveUtilities.MapFileName);
+        var statPath = Path.Combine(savePath, SaveUtilities.StatFileName);
 
-        byte[] bytes = ToTexture2D(mainScript.mainTexture).EncodeToPNG();
-        File.WriteAllBytes(mapPath, bytes);
+        SaveTextureToFile(ClassManager.MainScript.mainTexture, mapPath);
+        File.WriteAllText(statPath, JsonUtility.ToJson(ClassManager.InventoryScript.GetSaveState(), true));
+        
+        Debug.Log($"Game {saveName} saved!");
+    }
 
-        string json = JsonUtility.ToJson(inventoryScript.GetSaveState(), true);
-        File.WriteAllText(statPath, json);
+    private void SaveTextureToFile(RenderTexture mainTexture, string mapPath)
+    {
+        var mapTexture = ToTexture2D(mainTexture);
+        var byteData = mapTexture.GetRawTextureData();
+        using (var inputStream = File.Open(mapPath, FileMode.Create))
+        using (var gzip = new GZipStream(inputStream, CompressionMode.Compress))
+        {
+            
+            gzip.Write(byteData, 0, byteData.Length);
+        }
 
         Texture2D ToTexture2D(RenderTexture rTex)
         {
@@ -89,7 +99,5 @@ public class SaveScript : MonoBehaviour
             tex.Apply();
             return tex;
         }
-
-        Debug.Log($"Game {saveName} saved!");
     }
 }

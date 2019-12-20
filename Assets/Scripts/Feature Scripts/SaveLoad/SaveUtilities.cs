@@ -7,6 +7,9 @@ namespace Assets.Scripts
 {
     public static class SaveUtilities
     {
+        public static string MapFileName = "map.dat";
+        public static string StatFileName = "stats.json";
+
         private static readonly Regex validSaveNameRegex = new Regex(@"(-|\w|\s|\.|\(|\))+", RegexOptions.Compiled);
         public static bool IsValidName(string saveName)
         {
@@ -21,7 +24,7 @@ namespace Assets.Scripts
         public static bool IsValidSave(string savePath)
         {
             var filesInFolder = Directory.GetFiles(savePath);
-            return filesInFolder.Length == 2 && filesInFolder.Any(file => Path.GetFileName(file) == "map.png") && filesInFolder.Any(file => Path.GetFileName(file) == "stats.json");
+            return filesInFolder.Length == 2 && filesInFolder.Any(file => Path.GetFileName(file) == MapFileName) && filesInFolder.Any(file => Path.GetFileName(file) == StatFileName);
         }
 
         public static string GetSaveFolderPath()

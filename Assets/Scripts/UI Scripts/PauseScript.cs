@@ -7,6 +7,12 @@ public class PauseScript : MonoBehaviour
     public GameObject PausePanel;
     public GameObject SavePanel;
     
+    void Start()
+    {
+        PauseOverlay.SetActive(false);
+        Time.timeScale = 1;
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -26,7 +32,7 @@ public class PauseScript : MonoBehaviour
     public void GoToMenu()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("MenuScene");
     }
 
     public void ToggleSaveGame()
