@@ -30,7 +30,7 @@ public class MainMenuScript : MonoBehaviour
         StartCoroutine(PlayGameCoroutine());
     }
 
-    private IEnumerator PlayGameCoroutine()
+    public static IEnumerator PlayGameCoroutine()
     {
         yield return new WaitForSeconds(0.5f);
         ClassManager.Clear();

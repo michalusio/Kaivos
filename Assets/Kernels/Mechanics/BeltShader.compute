@@ -24,10 +24,11 @@ void RightToLeft(uint3 id : SV_DispatchThreadID)
 		{
 			int2 coordsLeft = coords + eee.xy;
 			int2 coordsRight = coords + eee.zy;
-			if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP)) continue;
+			int2 coordsBelow = coords + eee.yz;
+			if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP) || IS_EQUAL(NewFrame[coordsBelow], BELT_LEFT) || IS_EQUAL(NewFrame[coordsBelow], BELT_RIGHT)) continue;
 			if (IS_MOVABLE(NewFrame[coords]) && coords.y + eee.z >=0)
 			{
-				if (IS_EMPTY(NewFrame[coords + eee.xz]))
+				if (IS_EMPTY(NewFrame[coords + eee.xz]) && !IS_EMPTY(NewFrame[coords + eee.yz]))
 				{
 					NewFrame[coords + eee.xz] = NewFrame[coords];
 					NewFrame[coords] = 0;
@@ -78,10 +79,11 @@ void LeftToRight(uint3 id : SV_DispatchThreadID)
 		{
 			int2 coordsLeft = coords + eee.xy;
 			int2 coordsRight = coords + eee.zy;
-			if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP)) continue;
+			int2 coordsBelow = coords + eee.yz;
+			if (IS_EQUAL(NewFrame[coordsLeft], BELT_UP) || IS_EQUAL(NewFrame[coordsRight], BELT_UP) || IS_EQUAL(NewFrame[coordsBelow], BELT_LEFT) || IS_EQUAL(NewFrame[coordsBelow], BELT_RIGHT)) continue;
 			if (IS_MOVABLE(NewFrame[coords]) && coords.y + eee.z >= 0)
 			{
-				if (IS_EMPTY(NewFrame[coords + eee.zz]))
+				if (IS_EMPTY(NewFrame[coords + eee.zz]) && !IS_EMPTY(NewFrame[coords + eee.yz]))
 				{
 					NewFrame[coords + eee.zz] = NewFrame[coords];
 					NewFrame[coords] = 0;

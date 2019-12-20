@@ -3,7 +3,6 @@ using System.IO.Compression;
 using System.Linq;
 using Assets.Scripts;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LoadScript : MonoBehaviour
@@ -38,9 +37,9 @@ public class LoadScript : MonoBehaviour
 
     private void SetLoadGameNameFromButton(SaveItemPanelScript button)
     {
-        Debug.Log(button.SaveName);
         MainScript.LoadPath = button.SavePath;
-        SceneManager.LoadScene("SampleScene");
+        Camera.main.GetComponent<AudioSource>().Play();
+        StartCoroutine(MainMenuScript.PlayGameCoroutine());
     }
 
     public static Texture2D LoadTextureData(string filePath)

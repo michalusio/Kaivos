@@ -76,6 +76,22 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 		Result[WhereToPlace] = tile;
 		WasPlaced[0] = true;
 	}
+	else if (IS_BELT(tile) && IS_MOVABLE(Result[WhereToPlace]))
+	{
+		float4 temp = Result[WhereToPlace];
+		Result[WhereToPlace] = tile;
+		WhereToPlace.y += 1;
+		float4 currentPlace = Result[WhereToPlace];
+		while (IS_MOVABLE(currentPlace) || IS_EMPTY(currentPlace))
+		{
+			Result[WhereToPlace] = temp;
+			if (IS_EMPTY(currentPlace)) break;
+			temp = currentPlace;
+			WhereToPlace.y += 1;
+			currentPlace = Result[WhereToPlace];
+		}
+		WasPlaced[0] = true;
+	}
 	else
 	{
 		WasPlaced[0] = false;
