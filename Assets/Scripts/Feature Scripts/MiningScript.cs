@@ -41,7 +41,7 @@ public class MiningScript : MonoBehaviour
             }
             else
             {
-                ClassManager.SoundScript.MiningSound(0.25f / (ChosenMineSize * MineSpeed));
+                ClassManager.SoundScript.MiningSound(InstaMine ? 2.5f : (0.25f / (ChosenMineSize * MineSpeed)));
                 heldTime += Time.deltaTime;
                 if (heldTime > MineSpeed * ChosenMineSize || InstaMine)
                 {
