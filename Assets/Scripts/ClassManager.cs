@@ -11,8 +11,9 @@
         public static DrawingScript DrawingScript;
         public static MapReadService MapReadService;
         public static TabScript InventoryPanel;
+        public static SoundScript SoundScript;
 
-        internal static void Clear()
+        public static void Clear()
         {
             WaitingToLaunch = 0;
             MainScript = null;
@@ -22,6 +23,7 @@
             DrawingScript = null;
             MapReadService = null;
             InventoryPanel = null;
+            SoundScript = null;
         }
     }
 }
