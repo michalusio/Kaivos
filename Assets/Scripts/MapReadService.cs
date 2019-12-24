@@ -9,7 +9,7 @@ namespace Assets.Scripts
         {
             var rectReadTexture = new Rect(position - ((Vector2) size) / 4, size);
             rectReadTexture.min = Vector2.Max(rectReadTexture.min, Vector2.zero);
-            rectReadTexture.max = Vector2.Min(rectReadTexture.max, new Vector2(MainScript.MAP_SIZE + 2, MainScript.MAP_SIZE + 2));
+            rectReadTexture.max = Vector2.Min(rectReadTexture.max, new Vector2(MainScript.MAP_SIZE + 1, MainScript.MAP_SIZE + 1));
 
             RenderTexture.active = ClassManager.MainScript.mainTexturePrevFrame;
 

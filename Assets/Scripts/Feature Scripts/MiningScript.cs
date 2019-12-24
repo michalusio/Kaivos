@@ -47,6 +47,7 @@ public class MiningScript : MonoBehaviour
                 {
                     MineTile(heldTile.Value.Item1, heldTile.Value.Item2);
                     heldTime = 0;
+                    ClassManager.SoundScript.StopMining();
                 }
             }
         }
@@ -54,6 +55,7 @@ public class MiningScript : MonoBehaviour
         {
             heldTile = null;
             heldTime = 0;
+            ClassManager.SoundScript.StopMining();
         }
     }
 

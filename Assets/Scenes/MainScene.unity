@@ -817,8 +817,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MiningClips:
   - {fileID: 8300000, guid: e9ddac15788a7e14abeb2995bb26cbf7, type: 3}
-  OverworldClips: []
-  UndergroundClips: []
+  OverworldClips:
+  - {fileID: 8300000, guid: c23caef75459aa147983a7754f11eb7a, type: 3}
+  - {fileID: 8300000, guid: 66d51536932ef2442af27ece94a280ef, type: 3}
+  - {fileID: 8300000, guid: 141aa19c6b64c0f45b2e74553dbc116b, type: 3}
+  - {fileID: 8300000, guid: 1c30ad88fb882ba40b634a9151fc5520, type: 3}
+  - {fileID: 8300000, guid: d31a4d6def2defb40aa597b010fa8604, type: 3}
+  - {fileID: 8300000, guid: 29395fd9c4eb89a4082554238ef1991f, type: 3}
+  - {fileID: 8300000, guid: 8addc5e7174a6a44992dbec1d78ec346, type: 3}
+  UndergroundClips:
+  - {fileID: 8300000, guid: b4cefc1580007d947addbc064af638c6, type: 3}
+  - {fileID: 8300000, guid: ee4948127632c2d42885499156c6e11d, type: 3}
+  - {fileID: 8300000, guid: ac4602d8f7922dd418bffb74d3815998, type: 3}
+  - {fileID: 8300000, guid: b15c2eeb868df084093409d4a61e97b0, type: 3}
+  - {fileID: 8300000, guid: 3e4c71987c5d0f94a86db0d7875befae, type: 3}
+  - {fileID: 8300000, guid: 73e6b709c106e7c4e868ce79d13376b0, type: 3}
+  - {fileID: 8300000, guid: b4312ff463b7d7c4fb671d6ea36d5679, type: 3}
+  - {fileID: 8300000, guid: b98e8854910064842bcac63c67abf10b, type: 3}
   MachineClips:
   - {fileID: 8300000, guid: 4779fef9bdc521544be56790245a359f, type: 3}
   - {fileID: 8300000, guid: 2e7982714d33d5347bf72347aa7cfcd0, type: 3}
@@ -861,6 +876,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5a1495557aca1f143a7b08e4379ee1a8, type: 3}
   MiningSource: {fileID: 1224259762}
   BackgroundSource: {fileID: 756704753}
+  MachineBlocks: 0
+  OverBlocks: 0
+  UnderBlocks: 0
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
