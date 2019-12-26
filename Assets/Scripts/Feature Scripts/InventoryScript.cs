@@ -13,7 +13,7 @@ public partial class InventoryScript : OrderedMonoBehaviour
     
     public MoneyController Money { get; private set; } = 1000;
     
-    private Text _moneyText;
+    public Text MoneyText;
 
     private (int Tab, int Slot) chosenSlot;
     public (int Tab, int Slot) ChosenSlot
@@ -62,7 +62,7 @@ public partial class InventoryScript : OrderedMonoBehaviour
 
     protected override void Initialize()
     {
-        _moneyText = GameObject.Find("MoneyPanel").GetComponentInChildren<Text>();
+        MoneyText = GameObject.Find("MoneyPanel").GetComponentInChildren<Text>();
         
         BlockSlots = new RawImageMult[ClassManager.InventoryPanel.Panels.Length];
         for(int i = 0; i < BlockSlots.Length; i++)
@@ -129,7 +129,7 @@ public partial class InventoryScript : OrderedMonoBehaviour
 
     protected override void UpdateAction()
     {
-        _moneyText.text = Money.ToString();
+        MoneyText.text = Money.ToString();
         UpdateBlockAmounts();
 
         for(int i = 0; i < blockCodes.Length; i++)

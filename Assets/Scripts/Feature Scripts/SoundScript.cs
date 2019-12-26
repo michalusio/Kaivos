@@ -173,7 +173,7 @@ public class SoundScript : MonoBehaviour
     {
         new Color(0.2f, 0.2f, 0.2f, 1.0f),
         new Color(0.3f, 0.2f, 0.2f, 1.0f),
-        new Color(0.4f, 0.2f, 0.2f, 1.0f),
+        //new Color(0.4f, 0.2f, 0.2f, 1.0f),
         new Color(0.0f, 0.3f, 0.3f, 1.0f),
         new Color(0.1f, 0.3f, 0.3f, 1.0f),
         new Color(0.0f, 0.4f, 0.4f, 1.0f),

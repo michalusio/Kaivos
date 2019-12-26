@@ -2,10 +2,13 @@
 using System.Linq;
 using Assets.Scripts;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShopSellScript : MonoBehaviour
 {
     public ComputeShader ShopSellShader;
+
+    public GameObject SellTextPrefab;
 
     private Texture2D sellTexture;
 
@@ -22,8 +25,15 @@ public class ShopSellScript : MonoBehaviour
         Color[] items = GetSoldItemsInShopArea();
         ClearItemsInShopArea();
         int price = items.Sum(i => Pricing.FirstOrDefault(p => MapReadService.ColorNear(i, p.Item1)).Item2);
-        if (price != 0) Debug.Log($"Sold items for {price}$");
-        ClassManager.InventoryScript.Money.AddAmount(price);
+        if (price != 0)
+        {
+            Debug.Log($"Sold items for {price}$");
+
+            var textPrefab = Instantiate(SellTextPrefab, ClassManager.InventoryScript.MoneyText.transform.parent);
+            textPrefab.GetComponent<Text>().text = $"{price}$";
+            ClassManager.InventoryScript.Money.AddAmount(price);
+        }
+        
     }
 
     private Color[] GetSoldItemsInShopArea()
@@ -50,9 +60,9 @@ public class ShopSellScript : MonoBehaviour
     private static readonly List<(Color, int)> Pricing = new List<(Color, int)>
     {
         (new Color(0, 0.5f, 0.5f, 1.0f), 10),
-        (new Color(0.1f, 0.4f, 0.4f, 1.0f), 20),
-        (new Color(0.2f, 0.4f, 0.4f, 1.0f), 15),
-        (new Color(0.3f, 0.4f, 0.4f, 1.0f), 30),
+        (new Color(0.1f, 0.5f, 0.5f, 1.0f), 20),
+        (new Color(0.2f, 0.5f, 0.5f, 1.0f), 15),
+        (new Color(0.3f, 0.5f, 0.5f, 1.0f), 30),
 
         (new Color(0.0f, 0.0f, 0.9f, 1.0f), 50),
         (new Color(0.1f, 0.0f, 0.9f, 1.0f), 70),

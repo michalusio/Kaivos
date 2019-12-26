@@ -11,12 +11,9 @@ public class CheatScript : MonoBehaviour
     void Start()
     {
         canvas = GameObject.Find("Canvas");
-        if (Debug.isDebugBuild)
+        foreach(var d in DebugObjects)
         {
-            foreach(var d in DebugObjects)
-            {
-                d.SetActive(true);
-            }
+            d.SetActive(Debug.isDebugBuild);
         }
     }
 

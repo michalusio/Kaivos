@@ -972,6 +972,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShopSellShader: {fileID: 7200000, guid: 3c044a7d68d360040a4d11495a046de4, type: 3}
+  SellTextPrefab: {fileID: 3367738937244796547, guid: 3e799feac9b373c468d9c55b59c4b1e1,
+    type: 3}
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
