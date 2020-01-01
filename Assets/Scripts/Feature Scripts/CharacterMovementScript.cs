@@ -5,8 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(MainScript))]
 public class CharacterMovementScript : MonoBehaviour
 {
-    private MainScript mainScriptComponent;
-
     public Material MinerAnimationMaterial;
     public Texture2D MinerIdleTexture;
     public Texture2D MinerMoveTexture;
@@ -28,9 +26,8 @@ public class CharacterMovementScript : MonoBehaviour
 
     void Start()
     {
-        mainScriptComponent = GetComponent<MainScript>();
-
-        collisionUtility = new CollisionUtility(mainScriptComponent);
+        collisionUtility = new CollisionUtility();
+        ClassManager.CharacterMovementScript = this;
     }
     
     void Update()
@@ -45,20 +42,20 @@ public class CharacterMovementScript : MonoBehaviour
         {
             lastMoveDirection = Mathf.Sign(xMove);
         }
-        if (transform.position.y < -mainScriptComponent.mainTexture.height)
+        if (transform.position.y < -ClassManager.MainScript.mainTexture.height)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y + mainScriptComponent.mainTexture.height * 2, transform.position.z);
+            transform.position = new Vector3(transform.position.x, transform.position.y + ClassManager.MainScript.mainTexture.height * 2, transform.position.z);
         }
         
         if (Input.GetKeyUp(KeyCode.LeftControl) && Debug.isDebugBuild)
         {
-            if (mainScriptComponent.MAP_SCALING == 4)
+            if (ClassManager.MainScript.MAP_SCALING == 4)
             {
-                mainScriptComponent.MAP_SCALING = 5;
+                ClassManager.MainScript.MAP_SCALING = 5;
             }
-            else if (mainScriptComponent.MAP_SCALING == 5)
+            else if (ClassManager.MainScript.MAP_SCALING == 5)
             {
-                mainScriptComponent.MAP_SCALING = 4;
+                ClassManager.MainScript.MAP_SCALING = 4;
             }
         }
 

@@ -144,11 +144,25 @@
 				}
 				else if (IS_EQUAL(col, BELT_LEFT))
 				{
-					pos = BELT_LEFT_POS;
+					if ((IS_EQUAL(colLeft, BELT_LEFT) || IS_EQUAL(colLeft, BELT_UP)) && (IS_EQUAL(colRight, BELT_LEFT) || IS_EQUAL(colRight, BELT_UP)))
+					{
+						pos = BELT_LEFT_JOINED_POS;
+					}
+					else
+					{
+						pos = BELT_LEFT_POS;
+					}
 				}
 				else if (IS_EQUAL(col, BELT_RIGHT))
 				{
-					pos = BELT_RIGHT_POS;
+					if ((IS_EQUAL(colLeft, BELT_RIGHT) || IS_EQUAL(colLeft, BELT_UP)) && (IS_EQUAL(colRight, BELT_RIGHT) || IS_EQUAL(colRight, BELT_UP)))
+					{
+						pos = BELT_RIGHT_JOINED_POS;
+					}
+					else
+					{
+						pos = BELT_RIGHT_POS;
+					}
 				}
 				else if (IS_EQUAL(col, BELT_UP))
 				{

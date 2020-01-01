@@ -1,8 +1,8 @@
 ﻿using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Assets.Scripts;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LoadScript : MonoBehaviour
@@ -37,22 +37,34 @@ public class LoadScript : MonoBehaviour
 
     private void SetLoadGameNameFromButton(SaveItemPanelScript button)
     {
-        Debug.Log(button.SaveName);
         MainScript.LoadPath = button.SavePath;
-        SceneManager.LoadScene("SampleScene");
+        Camera.main.GetComponent<AudioSource>().Play();
+        StartCoroutine(MainMenuScript.PlayGameCoroutine());
     }
 
-    public static Texture2D LoadPNG(string filePath)
+    public static Texture2D LoadTextureData(string filePath)
     {
-        Texture2D tex = null;
-        byte[] fileData;
- 
+        Texture2D tex = new Texture2D(MainScript.MAP_SIZE, MainScript.MAP_SIZE, TextureFormat.RGBAFloat, false, false);
+        tex.Apply();
+        
         if (File.Exists(filePath))
         {
-            fileData = File.ReadAllBytes(filePath);
-            tex = new Texture2D(2, 2, TextureFormat.RGBAFloat, false, false);
+            var outputStream = new MemoryStream();
+            byte[] byteTextureData;
+
+            using (var inputStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var gzip = new GZipStream(inputStream, CompressionMode.Decompress))
+            {
+                gzip.CopyTo(outputStream);
+
+                gzip.Close();
+                inputStream.Close();
+                outputStream.Position = 0;
+                byteTextureData = outputStream.ToArray();
+            }
+
+            tex.LoadRawTextureData(byteTextureData);
             tex.Apply();
-            tex.LoadImage(fileData);
         }
         return tex;
     }

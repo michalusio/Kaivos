@@ -1,0 +1,70 @@
+﻿#include "..\noiseSimplex.cginc"
+#include "..\blockList.cginc"
+#define LIGHT(x) (x.a > 0.5)
+
+RWTexture2D<float4> Frame;
+RWTexture2D<float4> Result;
+float Time;
+
+#pragma kernel ShadowMap
+[numthreads(16, 16, 1)]
+void ShadowMap(uint3 id : SV_DispatchThreadID)
+{
+	int3 e = int3(1, 0, -1);
+	float4 col = Frame[id.xy];
+	if (IS_GLOWING(col))
+	{
+		float noise = (2 + snoise(float3(id.xy * 0.05, Time / 5))) / 3;
+		float3 glowColor = float3(1, 0.078, 0.154) * trunc(noise * 8) / 8;
+		Result[id.xy] = max(Result[id.xy], float4(glowColor, 1.0));
+	}
+	if (IS_TREENEMY(col) && IS_TREENEMY_TRIGGER(col))
+	{
+		Result[id.xy] = max(Result[id.xy], float4(0.0, col.y * 0.333, 0.0, 1.0));
+	}
+	if (((LIGHT(Result[id.xy + e.xy]) && IS_TRANSPARENT(Frame[id.xy + e.xy])) ||
+		(LIGHT(Result[id.xy + e.zy]) && IS_TRANSPARENT(Frame[id.xy + e.zy])) ||
+		(LIGHT(Result[id.xy + e.yx]) && IS_TRANSPARENT(Frame[id.xy + e.yx])) ||
+		(LIGHT(Result[id.xy + e.yz]) && IS_TRANSPARENT(Frame[id.xy + e.yz])))
+		&& id.y > 981)
+	{
+		Result[id.xy] = float4(1.0, 1.0, 1.0, 1.0);
+	}
+	else if (IS_LIGHTED(col))
+	{
+		Result[id.xy] = float4(10.0, 10.0, 10.0, 1.0);
+	}
+	else
+	{
+		float3 color =
+			max(
+			max(
+			max(
+			max(
+			max(
+			max(
+			max(
+			Result[id.xy + e.xy],
+			Result[id.xy + e.zy]),
+			Result[id.xy + e.yx]),
+			Result[id.xy + e.yz]),
+			Result[id.xy + e.xx] / SQRT2),
+			Result[id.xy + e.xz] / SQRT2),
+			Result[id.xy + e.zx] / SQRT2),
+			Result[id.xy + e.zz] / SQRT2).rgb;
+		float3 diff = abs(color.rrg - color.gbb);
+		float maxDiff = min(1.0, max(max(diff.r, diff.g), diff.b));
+		color *= (maxDiff * 0.2 + 0.8) * (IS_EMPTY(col) ? 1.0 : 0.9);
+		
+		Result[id.xy] = float4(color, 1.0);
+	}
+}
+
+#pragma kernel StartShadowMap
+[numthreads(16, 16, 1)]
+void StartShadowMap(uint3 id : SV_DispatchThreadID)
+{
+	uint w, h;
+	Result.GetDimensions(w, h);
+    Result[int2(id.x + w/2 - 8, h - id.y)] = float4(1.0, 1.0, 1.0, 1.0);
+}

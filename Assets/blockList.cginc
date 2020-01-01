@@ -52,6 +52,8 @@
 #define BELT_LEFT_POS float2(0, 108)
 #define BELT_RIGHT_POS float2(0, 112)
 #define BELT_UP_POS float2(0, 116)
+#define BELT_LEFT_JOINED_POS float2(0, 240)
+#define BELT_RIGHT_JOINED_POS float2(0, 244)
 
 #define WATER float4(0, 0.7, 0.7, 1.0)
 #define LAVA float4(1, 0.7, 0.7, 1.0)
@@ -84,7 +86,7 @@
 
 #define MINED(u) (float4(u.x, 0.5, 0.5, 1.0))
 
-#define IS_EQUAL(x, y) all(abs(x - y)<0.01)
+#define IS_EQUAL(x, y) all(abs(x - y) < 0.01)
 #define IS_EMPTY(x) (x.a < 0.5)
 #define IS_TRANSPARENT(x) (IS_EMPTY(x) || IS_EQUAL(x, TREE_LEAVES))
 #define IS_STRUCTURE(u) (IS_SHOP(u) || IS_JUNCTION(u) || IS_FORGE(u))

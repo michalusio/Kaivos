@@ -6,17 +6,11 @@ namespace Assets.Scripts
 {
     public partial class CollisionUtility
     {
-        private readonly MainScript mainScriptComponent;
-        
         private PixelMovement[] collisionArray;
-
-        private readonly Texture2D collisionTexture;
         private readonly Rect[] collisionRects;
 
-        public CollisionUtility(MainScript mainScript)
+        public CollisionUtility()
         {
-            mainScriptComponent = mainScript;
-
             collisionArray = new PixelMovement[8];
 
             collisionRects = new Rect[8];
@@ -24,29 +18,19 @@ namespace Assets.Scripts
             {
                 collisionRects[i] = new Rect((i % 2) * 16, ((7 - i) / 2) * 16, 16, 16);
             }
-
-            collisionTexture = new Texture2D(2, 4, TextureFormat.RGBAFloat, false, false);
-            collisionTexture.Apply();
         }
 
         public (PixelMovement, float) DetectCollision(Vector3 newPosition)
         {
-            collisionArray = GetFromTexture(new Vector2(mainScriptComponent.mainTexture.width / 2 - newPosition.x - 0.5f, mainScriptComponent.mainTexture.height / 2 - newPosition.y - 1));
+            var playerPos = new Vector2(ClassManager.MainScript.mainTexture.width / 2 - newPosition.x, ClassManager.MainScript.mainTexture.height / 2 - newPosition.y);
+            var pixels = ClassManager.MapReadService.GetFromTexture(playerPos, new Vector2Int(2, 4));
+            collisionArray = ToMovement(pixels);
         
             return (collisionArray.Max(), collisionArray.Count(c => c == PixelMovement.LIQUID) / 8f);
         }
 
-        private PixelMovement[] GetFromTexture(Vector2 position)
+        private PixelMovement[] ToMovement(Color[] pixels)
         {
-            var rectReadTexture = new Rect(position, new Vector2(2, 4));
-        
-            RenderTexture.active = mainScriptComponent.mainTexturePrevFrame;
-        
-            collisionTexture.ReadPixels(rectReadTexture, 0, 0);
-            var pixels = collisionTexture.GetPixels();
-            GL.Flush();
-            RenderTexture.active = null;
-
             return pixels.Select(p => DecodePixel(p)).ToArray();
         }
 

@@ -15,7 +15,14 @@ public class SaveItemPanelScript : MonoBehaviour
         SaveName = name;
         SavePath = path;
         SaveNameText.text = ' ' + name;
-        SavePathText.text = ' ' + path;
+        SavePathText.text = ' ' + Ellipsis(path);
+    }
+
+    private const int ELLIPSIS_LENGTH = 40;
+    private string Ellipsis(string path)
+    {
+        if (path.Length < ELLIPSIS_LENGTH) return path;
+        return "..." + path.Substring(path.Length - ELLIPSIS_LENGTH + 3, ELLIPSIS_LENGTH - 3);
     }
 
     public void DeleteSave()

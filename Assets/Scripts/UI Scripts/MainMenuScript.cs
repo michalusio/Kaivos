@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using Assets.Scripts;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -25,12 +27,25 @@ public class MainMenuScript : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("SampleScene");
+        StartCoroutine(PlayGameCoroutine());
+    }
+
+    public static IEnumerator PlayGameCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        ClassManager.Clear();
+        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("UIScene", LoadSceneMode.Additive);
     }
 
     public void QuitGame()
     {
-        Debug.Log("Quit");
+        StartCoroutine(QuitGameCoroutine());
+    }
+
+    private IEnumerator QuitGameCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
         Application.Quit();
     }
 }
