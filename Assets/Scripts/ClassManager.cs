@@ -2,6 +2,8 @@
 {
     public static class ClassManager
     {
+        public static float Volume = 1;
+
         public static int WaitingToLaunch = 0;
 
         public static MainScript MainScript;

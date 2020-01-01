@@ -3,10 +3,10 @@ using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
-[ExecuteAlways]
 public class MenuItemSpriteSet : MonoBehaviour
 {
     public BlockType SetTo;
+    private bool _initialized;
 
     public enum BlockType
     {
@@ -62,21 +62,17 @@ public class MenuItemSpriteSet : MonoBehaviour
         {BlockType.TREENEMY_BRANCH, 140}
     };
 
-    void Start()
-    {
-        var image = GetComponent<RawImage>();
-        if (ClassManager.DrawingScript != null)
-        {
-            var tileTexture = ClassManager.DrawingScript.TileSetMapMaterial.GetTexture("_TileTex");
-            image.uvRect = new Rect(0, (tileTexture.height - 4 - (float)BlockTypeY[SetTo])/tileTexture.height, 4f/tileTexture.width, 4f/tileTexture.height);
-        }
-    }
-
     void Update()
     {
-        if (!Application.isPlaying)
+        if (!_initialized)
         {
-            Start();
+            if (ClassManager.DrawingScript != null)
+            {
+                var image = GetComponent<RawImage>();
+                var tileTexture = ClassManager.DrawingScript.TileSetMapMaterial.GetTexture("_TileTex");
+                image.uvRect = new Rect(0, (tileTexture.height - 4 - (float)BlockTypeY[SetTo])/tileTexture.height, 4f/tileTexture.width, 4f/tileTexture.height);
+                _initialized = true;
+            }
         }
     }
 }

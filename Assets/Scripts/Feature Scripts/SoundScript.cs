@@ -28,6 +28,8 @@ public class SoundScript : MonoBehaviour
 
         LowPass = Camera.main.GetComponent<AudioLowPassFilter>();
 
+        AudioListener.volume = ClassManager.Volume;
+
         ClassManager.SoundScript = this;
         UpdateColorsAround();
     }

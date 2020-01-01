@@ -52,9 +52,9 @@ void ShadowMap(uint3 id : SV_DispatchThreadID)
 			Result[id.xy + e.xz] / SQRT2),
 			Result[id.xy + e.zx] / SQRT2),
 			Result[id.xy + e.zz] / SQRT2).rgb;
-		float3 diff = abs(color.rrg-color.gbb);
+		float3 diff = abs(color.rrg - color.gbb);
 		float maxDiff = min(1.0, max(max(diff.r, diff.g), diff.b));
-		color *= (maxDiff * 0.2 + 0.8) * (IS_EMPTY(col) ? 1.0 : 0.8);
+		color *= (maxDiff * 0.2 + 0.8) * (IS_EMPTY(col) ? 1.0 : 0.9);
 		
 		Result[id.xy] = float4(color, 1.0);
 	}

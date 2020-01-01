@@ -1,50 +1,68 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class OptionsScript : MonoBehaviour
 {
-    public Dropdown resolutionDropdown;
+    public Dropdown ResolutionDropdown;
+    public Toggle FullScreenToggle;
+    public Slider VolumeSlider;
 
-    Resolution[] resolutions;
+    public AudioClip VolumeSlideClip;
 
-    void Start ()
+    private Resolution[] resolutions;
+
+    void Awake()
     {
-        resolutions = Screen.resolutions;
+        resolutions = Screen.resolutions.Where(r => r.width > 1000).ToArray();
 
-        resolutionDropdown.ClearOptions();
+        ResolutionDropdown.ClearOptions();
 
-        List<string> options = new List<string>();
+        var options = new List<string>();
 
         int currentResolutionIndex = 0;
 
         for (int i = 0; i < resolutions.Length; i++)
         {
-            string option = resolutions[i].width + " x " + resolutions[i].height;
-            options.Add(option);
+            var resolution = resolutions[i];
+            options.Add(resolution.ToString());
 
-            if (resolutions[i].width == Screen.currentResolution.width &&
-                resolutions[i].height == Screen.currentResolution.height)
+            if (Screen.currentResolution.Equals(resolution))
             {
                 currentResolutionIndex = i;
             }
         }
-        resolutionDropdown.AddOptions(options);
-        resolutionDropdown.value = currentResolutionIndex;
-        resolutionDropdown.RefreshShownValue();     
+        ResolutionDropdown.onValueChanged.RemoveAllListeners();
+        ResolutionDropdown.AddOptions(options);
+        ResolutionDropdown.value = currentResolutionIndex;
+        ResolutionDropdown.onValueChanged.AddListener(SetResolution);
+        ResolutionDropdown.RefreshShownValue();
+        
+        FullScreenToggle.onValueChanged.RemoveAllListeners();
+        FullScreenToggle.isOn = Screen.fullScreen;
+        FullScreenToggle.onValueChanged.AddListener(SetFullScreen);
+        
+        VolumeSlider.onValueChanged.RemoveAllListeners();
+        VolumeSlider.value = ClassManager.Volume * VolumeSlider.maxValue;
+        VolumeSlider.onValueChanged.AddListener(SetVolume);
     }
 
-    public void SetResolution (int resolutionIndex)
+    public void SetResolution(int resolutionIndex)
     {
-        Resolution resolution = resolutions[resolutionIndex];
-        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
-    }
-    public void SetVolume (float volume)
-    {
-        Debug.Log(volume);
+        var resolution = resolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen, resolution.refreshRate);
     }
 
-    public void SetFullScreen (bool isFullscreen)
+    public void SetVolume(float volume)
+    {
+        ClassManager.Volume = volume / VolumeSlider.maxValue;
+        AudioListener.volume = ClassManager.Volume;
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(VolumeSlideClip);
+    }
+
+    public void SetFullScreen(bool isFullscreen)
     {
         Screen.fullScreen = isFullscreen;
     }

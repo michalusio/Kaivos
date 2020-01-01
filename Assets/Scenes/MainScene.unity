@@ -44,7 +44,7 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -914,6 +914,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlaceTileShader: {fileID: 7200000, guid: bd2c5ecc614f0884386fb592761af660, type: 3}
+  MoneyText: {fileID: 0}
   BlockAmounts: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   InfiniteInventory: 0
 --- !u!114 &963194227

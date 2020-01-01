@@ -15,8 +15,7 @@ public class SellTextScript : MonoBehaviour
         alpha = 1;
         textComponent.color = new Color(0.2f, 1, 0.2f, alpha);
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         alpha -= Time.deltaTime;

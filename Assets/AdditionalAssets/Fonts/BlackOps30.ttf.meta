@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: b7fd06e03a7e9f3478c22cf3fe2c62cc
+guid: 336fa2f57c737e34780688510867bd46
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
-  fontSize: 120
+  fontSize: 30
   forceTextureCase: -1
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Arbutus
+  fontName: Black Ops One
   fontNames:
-  - Arbutus
+  - Black Ops One
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

@@ -86,7 +86,7 @@
 
 #define MINED(u) (float4(u.x, 0.5, 0.5, 1.0))
 
-#define IS_EQUAL(x, y) all(abs(x - y)<0.01)
+#define IS_EQUAL(x, y) all(abs(x - y) < 0.01)
 #define IS_EMPTY(x) (x.a < 0.5)
 #define IS_TRANSPARENT(x) (IS_EMPTY(x) || IS_EQUAL(x, TREE_LEAVES))
 #define IS_STRUCTURE(u) (IS_SHOP(u) || IS_JUNCTION(u) || IS_FORGE(u))
