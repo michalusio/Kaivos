@@ -163,6 +163,7 @@ public partial class InventoryScript : OrderedMonoBehaviour
                 if (wasPlaced[0] != 0)
                 {
                     BlockAmounts[index] = Mathf.Max(0, BlockAmounts[index] - 1);
+                    ClassManager.SoundScript.PlaceBlock();
                 }
             }
         }

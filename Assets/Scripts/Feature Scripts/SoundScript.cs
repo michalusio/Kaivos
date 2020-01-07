@@ -9,12 +9,15 @@ public class SoundScript : MonoBehaviour
     public AudioClip[] OverworldClips;
     public AudioClip[] UndergroundClips;
     public AudioClip[] MachineClips;
+    public AudioClip[] PlaceClips;
     
     public GameObject MiningSource;
     public GameObject BackgroundSource;
+    public GameObject PlaceSource;
 
     private AudioSource[] MiningAudios;
     private AudioSource[] BackgroundAudios;
+    private AudioSource[] PlaceAudios;
 
     private AudioLowPassFilter LowPass;
 
@@ -25,6 +28,7 @@ public class SoundScript : MonoBehaviour
     {
         MiningAudios = MiningSource.GetComponents<AudioSource>();
         BackgroundAudios = BackgroundSource.GetComponents<AudioSource>();
+        PlaceAudios = PlaceSource.GetComponents<AudioSource>();
 
         LowPass = Camera.main.GetComponent<AudioLowPassFilter>();
 
@@ -53,6 +57,19 @@ public class SoundScript : MonoBehaviour
         foreach(var ms in MiningAudios)
         {
             ms.Stop();
+        }
+    }
+
+    public void PlaceBlock()
+    {
+        foreach(var p in PlaceAudios)
+        {
+            if (!p.isPlaying)
+            {
+                p.pitch = Random.Range(2.7f, 3.3f);
+                p.PlayOneShot(PlaceClips[Random.Range(0, PlaceClips.Length)]);
+                break;
+            }
         }
     }
 
