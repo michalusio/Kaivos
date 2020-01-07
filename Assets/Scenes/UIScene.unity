@@ -6532,9 +6532,9 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "Elementy kt\xF3re mo\u017Cna zbudwa\u0107:\n\nTa\u015Bmoci\u0105gi w lewo
-    i prawo\nTransporuj\u0105 urobrek, nie mog\u0105 by\u0107 zablokowane terenem
-    lub innym \nelementem stawialnym.\n\nTa\u015Bmoci\u0105gi w g\xF3r\u0119\nTransporuj\u0105
-    urobrek, r\xF3wnie\u017C nie mog\u0105\nby\u0107 blokowane\n\n"
+    i prawo\nTransporuj\u0105 urobek, nie mog\u0105 by\u0107 zablokowane terenem lub
+    innym \nelementem stawialnym.\n\nTa\u015Bmoci\u0105gi w g\xF3r\u0119\nTransporuj\u0105
+    urobek, r\xF3wnie\u017C nie mog\u0105\nby\u0107 blokowane\n\n"
 --- !u!222 &584720600
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23887,8 +23887,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Elementy kt\xF3re mo\u017Cna zbudwa\u0107:\n\nPrzetapialnia/Ku\u017Ania/Huta\nPrzerabia
-    surow\u0105 rud\u0119 na sztabki \nu\u017Cywaj\u0105c w\u0119gla.\n\n\n"
+  m_Text: "Elementy kt\xF3re mo\u017Cna zbudwa\u0107:\n\nHuta\nPrzerabia surow\u0105
+    rud\u0119 na sztabki \nu\u017Cywaj\u0105c w\u0119gla.\n\n\n"
 --- !u!222 &1969001664
 CanvasRenderer:
   m_ObjectHideFlags: 0
