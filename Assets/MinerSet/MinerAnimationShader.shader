@@ -4,8 +4,8 @@
     {
         _IdleTex ("Idle Texture", 2D) = "white" {}
 		_MoveTex ("Move Texture", 2D) = "white" {}
-		_MoveDirection ("Move Direction", Float) = 1.0
-		_MoveSpeed ("Move Speed", Float) = 1.0
+		_ShadowTex ("Shadow Texture", 2D) = "white" {}
+		_PositionSpeedDirection ("Position", Vector) = (0, 0, 1.0, 1.0)
     }
     SubShader
     {
@@ -43,8 +43,9 @@
 
             sampler2D _IdleTex;
 			sampler2D _MoveTex;
-			float _MoveSpeed;
-			float _MoveDirection;
+			sampler2D _ShadowTex;
+			float4 _PositionSpeedDirection;
+			float4 _ShadowTex_TexelSize;
 			
             float4 frag (v2f i) : SV_Target
             {
@@ -52,13 +53,25 @@
 				idleW = 48;
 				moveW = 96;
 				h = 16;
+				
+				float2 _Position = _PositionSpeedDirection.xy;
+				float _MoveSpeed = _PositionSpeedDirection.z;
+				float _MoveDirection = _PositionSpeedDirection.w;
+				
+				
 				float moveDirSign = sign(_MoveDirection);
 				_MoveDirection = abs(_MoveDirection);
+				float4 col;
 				if (abs(_MoveSpeed) > 0.1)
 				{
-					return tex2D(_MoveTex, (float2(trunc(_Time.w * 3 * _MoveDirection), 0) + i.uv * int2(moveDirSign, 1)) / float2(6, 1));
+					col = tex2D(_MoveTex, (float2(trunc(_Time.w * 3 * _MoveDirection), 0) + i.uv * int2(moveDirSign, 1)) / float2(6, 1));
 				}
-                return tex2D(_IdleTex, (float2(trunc(_Time.w * 3 * _MoveDirection), 0) + i.uv * int2(moveDirSign, 1)) / float2(3, 1));
+				else
+				{
+					col = tex2D(_IdleTex, (float2(trunc(_Time.w * 3 * _MoveDirection), 0) + i.uv * int2(moveDirSign, 1)) / float2(3, 1));
+				}
+				float2 coords =(_Position + float2(512, 512) + i.uv / float2(32, 16)) * _ShadowTex_TexelSize.xy;
+                return col * saturate(tex2D(_ShadowTex, float2(1 - coords.x, coords.y)));
             }
             ENDCG
         }

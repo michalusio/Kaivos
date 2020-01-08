@@ -24,6 +24,8 @@ public class DrawingScript : OrderedMonoBehaviour
         _slotCursor = new SlotCursorParams();
         UpdateInventorySlot();
 
+        ClassManager.CharacterMovementScript.MinerAnimationMaterial.SetTexture("_ShadowTex", ClassManager.MainScript.shadowTexture);
+
         ClassManager.DrawingScript = this;
     }
 

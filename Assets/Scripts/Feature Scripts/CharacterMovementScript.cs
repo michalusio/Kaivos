@@ -37,7 +37,6 @@ public class CharacterMovementScript : MonoBehaviour
         int xMove = Mathf.RoundToInt(Input.GetAxis("Horizontal") * CAMERA_SPEED * speedUp);
         int jumpMove = Mathf.RoundToInt(((Input.GetButton("Jump") && canJump) ? 1 : 0) * JUMP_SPEED / Time.deltaTime);
 
-        MinerAnimationMaterial.SetFloat("_MoveSpeed", xMove);
         if (Mathf.Abs(xMove) > 0)
         {
             lastMoveDirection = Mathf.Sign(xMove);
@@ -59,7 +58,8 @@ public class CharacterMovementScript : MonoBehaviour
             }
         }
 
-        MinerAnimationMaterial.SetFloat("_MoveDirection", lastMoveDirection * speedUp);
+        MinerAnimationMaterial.SetVector("_PositionSpeedDirection", new Vector4(transform.position.x, transform.position.y, xMove, lastMoveDirection * speedUp));
+
         PhysicMove(-xMove, jumpMove - g * 8);
     }
 
