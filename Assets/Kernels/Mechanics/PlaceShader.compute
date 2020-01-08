@@ -106,51 +106,47 @@ void MakeTreeBranch(int2 branchStart, bool direction)
 	MakeLeaves(branchStart);
 }
 
-[numthreads(1, 1, 1)]
-void PlaceThings(uint3 id : SV_DispatchThreadID)
+void PlaceTree(int treeX)
 {
-	uint mapW, mapH;
-	NewFrame.GetDimensions(mapW, mapH);
-	
-	for (int treeIndex = 0; treeIndex < MAPGEN_SURFACE_TREE_COUNT; treeIndex++)
+	if (treeX + 15 > SHOP_PLACEMENT.x && treeX - 10 < SHOP_PLACEMENT.x) return;
+	int treeStartY = 1023;
+	float4 spaceCol = NewFrame[int2(treeX, treeStartY - 1)];
+	while (IS_EMPTY(spaceCol) || IS_EQUAL(spaceCol, TREE_TRUNK) || IS_EQUAL(spaceCol, TREE_LEAVES))
 	{
-		int treeX = (int)((seedNoise(int2(treeIndex + 0.5, MAPGEN_SURFACE_TREE_COUNT + 0.5)) + 1) * 0.5 * mapW);
-		if (treeX + 15 > SHOP_PLACEMENT.x && treeX - 10 < SHOP_PLACEMENT.x) continue;
-		int treeStartY = 1023;
-		float4 spaceCol = NewFrame[int2(treeX, treeStartY - 1)];
-		while (IS_EMPTY(spaceCol) || IS_EQUAL(spaceCol, TREE_TRUNK) || IS_EQUAL(spaceCol, TREE_LEAVES))
+		treeStartY--;
+		spaceCol = NewFrame[int2(treeX, treeStartY - 1)];
+	}
+	int treeY = 0;
+	int treeHeight = 10;
+	for (; treeY < treeHeight; treeY++)
+	{
+		int2 branchPos = int2(treeX, treeY + treeStartY);
+		NewFrame[branchPos] = TREE_TRUNK;
+		if (treeY > 5 && rand(branchPos) && rand(branchPos, 1))
 		{
-			treeStartY--;
-			spaceCol = NewFrame[int2(treeX, treeStartY - 1)];
-		}
-		int treeY = 0;
-		int treeHeight = 10;
-		for (; treeY < treeHeight; treeY++)
-		{
-			int2 branchPos = int2(treeX, treeY + treeStartY);
-			NewFrame[branchPos] = TREE_TRUNK;
-			if (treeY > 5 && rand(branchPos) && rand(branchPos, 1))
-			{
-				MakeTreeBranch(branchPos, rand(branchPos, 3));
-				treeHeight += 1;
-			}
-		}
-		for (int i = 0; i < 5; i++)
-		{
-			int2 noiseMove = int2((int)round(seedNoise(int2(treeX + 0.5, treeY + 1.5)) * 2), (int)round(-abs(seedNoise(int2(treeX + 0.5, treeY + 1.5)) * 2)));
-			bool rnd = rand(int2(treeX + 0.5, treeY + 1.5), i + 3);
-			if (rnd)
-			{
-				noiseMove.x = -abs(noiseMove.x);
-			}
-			else
-			{
-				noiseMove.x = abs(noiseMove.x);
-			}
-			MakeTreeBranch(int2(treeX, treeY + treeStartY) + noiseMove, rnd);
+			MakeTreeBranch(branchPos, rand(branchPos, 3));
+			treeHeight += 1;
 		}
 	}
-	
+	for (int i = 0; i < 5; i++)
+	{
+		int2 noiseMove = int2((int)round(seedNoise(int2(treeX + 0.5, treeY + 1.5)) * 2), (int)round(-abs(seedNoise(int2(treeX + 0.5, treeY + 1.5)) * 2)));
+		bool rnd = rand(int2(treeX + 0.5, treeY + 1.5), i + 3);
+		if (rnd)
+		{
+			noiseMove.x = -abs(noiseMove.x);
+		}
+		else
+		{
+			noiseMove.x = abs(noiseMove.x);
+		}
+		MakeTreeBranch(int2(treeX, treeY + treeStartY) + noiseMove, rnd);
+	}
+	AllMemoryBarrierWithGroupSync();
+}
+
+void PlaceShop()
+{
 	for (int idx = 0; idx < 3; idx++)
 	{
 		for (int idy = 0; idy < 5; idy++)
@@ -184,6 +180,22 @@ void PlaceThings(uint3 id : SV_DispatchThreadID)
 		NewFrame[coord] = LADDER;
 		coord += eee.yz;
 	}
+}
+
+[numthreads(1, 1, 1)]
+void PlaceThings(uint3 id : SV_DispatchThreadID)
+{
+	uint mapW, mapH;
+	NewFrame.GetDimensions(mapW, mapH);
+	
+	for (int treeIndex = 0; treeIndex < MAPGEN_SURFACE_TREE_COUNT; treeIndex++)
+	{
+		int treeX = (int)((seedNoise(int2(treeIndex + 0.5, MAPGEN_SURFACE_TREE_COUNT + 0.5)) + 1) * 0.5 * mapW);
+		PlaceTree(treeX);
+		PlaceTree(treeX+1);
+	}
+	
+	PlaceShop();
 }
 
 #pragma kernel TreenemySpawn

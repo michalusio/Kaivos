@@ -9,6 +9,7 @@ namespace Assets.Scripts
         public int Money;
         public Vector2 Position;
         public int[] BlockAmounts;
+        public int[] Upgrades;
         public int Seed;
     }
 }

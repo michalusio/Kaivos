@@ -14,7 +14,7 @@ public class ShopSellScript : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating("SellItemsInShopArea", 1f, 1f);
+        InvokeRepeating("SellItemsInShopArea", 0f, 1f);
 
         sellTexture = new Texture2D(8, 8, TextureFormat.RGBAFloat, false, false);
         sellTexture.Apply();

@@ -104,6 +104,6 @@ public class MiningScript : MonoBehaviour
 
 
 
-        (new Color(0.0f, 0.5f, 0.2f, 1.0f), 3, 10)
+        (new Color(0.0f, 0.5f, 0.2f, 1.0f), 3, 5)
     };
 }

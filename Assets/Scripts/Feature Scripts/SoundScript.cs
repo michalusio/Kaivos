@@ -125,7 +125,7 @@ public class SoundScript : MonoBehaviour
 
         var playerPos = new Vector2(ClassManager.MainScript.mainTexture.width / 2 - ClassManager.MainScript.transform.position.x, ClassManager.MainScript.mainTexture.height / 2 - ClassManager.MainScript.transform.position.y);
 
-        var colorsAround = ClassManager.MapReadService.GetFromTexture(playerPos - new Vector2(10, 10), new Vector2Int(20, 20));
+        var colorsAround = ClassManager.MapReadService.GetFromTexture(playerPos, new Vector2Int(20, 20));
 
         MachineBlocks = 0;
         OverBlocks = 0;

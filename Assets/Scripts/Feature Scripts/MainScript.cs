@@ -95,6 +95,8 @@ public class MainScript : MonoBehaviour
         ParticleShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.SetTexture(2, "NewFrame", mainTexture);
         ParticleShader.SetTexture(2, "FrameBefore", mainTexturePrevFrame);
+        ParticleShader.SetTexture(3, "NewFrame", mainTexture);
+        ParticleShader.SetTexture(3, "FrameBefore", mainTexturePrevFrame);
         BeltShader.SetTexture(0, "NewFrame", mainTexture);
         BeltShader.SetTexture(0, "FrameBefore", mainTexturePrevFrame);
         BeltShader.SetTexture(1, "NewFrame", mainTexture);
@@ -150,13 +152,13 @@ public class MainScript : MonoBehaviour
     private void SetupMachineShader()
     {
         ParticleShader.SetFloat("Time", Time.realtimeSinceStartup);
-        ParticleShader.SetTexture(2, "NewFrame", mainTexturePrevFrame);
-        ParticleShader.SetTexture(2, "FrameBefore", mainTexture);
+        ParticleShader.SetTexture(3, "NewFrame", mainTexturePrevFrame);
+        ParticleShader.SetTexture(3, "FrameBefore", mainTexture);
     }
 
     private void DispatchMachineShader()
     {
-        ParticleShader.Dispatch(2, mainTexture.width / 16, mainTexture.height / 16, 1);
+        ParticleShader.Dispatch(3, mainTexture.width / 16, mainTexture.height / 16, 1);
     }
 
     private void SetupUpdateShaders()
@@ -166,6 +168,8 @@ public class MainScript : MonoBehaviour
         ParticleShader.SetTexture(0, "FrameBefore", mainTexturePrevFrame);
         ParticleShader.SetTexture(1, "NewFrame", mainTexture);
         ParticleShader.SetTexture(1, "FrameBefore", mainTexturePrevFrame);
+        ParticleShader.SetTexture(2, "NewFrame", mainTexture);
+        ParticleShader.SetTexture(2, "FrameBefore", mainTexturePrevFrame);
 
         BeltShader.SetFloat("Time", Time.realtimeSinceStartup);
         BeltShader.SetTexture(0, "NewFrame", mainTexture);
@@ -180,6 +184,7 @@ public class MainScript : MonoBehaviour
     {
         ParticleShader.Dispatch(0, mainTexture.width / 256, 1, 1);
         ParticleShader.Dispatch(1, mainTexture.width / 16, mainTexture.height / 16, 1);
+        ParticleShader.Dispatch(2, mainTexture.width / 16, mainTexture.height / 16, 1);
 
         BeltShader.Dispatch(0, 1, mainTexture.height / 256, 1);
         BeltShader.Dispatch(1, 1, mainTexture.height / 256, 1);

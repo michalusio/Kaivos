@@ -1,14 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Tutorial : MonoBehaviour
+public class Tutorial : OrderedMonoBehaviour
 {
     public GameObject[] Panele = new GameObject [8];
     private int Page = 0;
     public Button NextPage;
     public Button BackPage;
+
+    protected override int Order => 3;
 
     public void ChangePage(int Page)
     {
@@ -51,4 +52,15 @@ public class Tutorial : MonoBehaviour
         }
     }
 
+    protected override void Initialize()
+    {
+        if (MainScript.LoadPath != null)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    protected override void UpdateAction()
+    {
+    }
 }

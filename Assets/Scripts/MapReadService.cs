@@ -7,7 +7,7 @@ namespace Assets.Scripts
     {
         public Color[] GetFromTexture(Vector2 position, Vector2Int size)
         {
-            var rectReadTexture = new Rect(position - ((Vector2) size) / 4, size);
+            var rectReadTexture = new Rect(position - ((Vector2) size) / 2, size);
             rectReadTexture.min = Vector2.Max(rectReadTexture.min, Vector2.zero);
             rectReadTexture.max = Vector2.Min(rectReadTexture.max, new Vector2(MainScript.MAP_SIZE + 1, MainScript.MAP_SIZE + 1));
 
@@ -26,7 +26,7 @@ namespace Assets.Scripts
 
         public static bool ColorNear(Color a, Color b)
         {
-            return Mathf.Abs(a.r - b.r) + Mathf.Abs(a.g - b.g) + Mathf.Abs(a.b - b.b) + Mathf.Abs(a.a - b.a) < 0.01f;
+            return Mathf.Abs(a.r - b.r) + Mathf.Abs(a.g - b.g) + Mathf.Abs(a.b - b.b) + Mathf.Abs(a.a - b.a) < 0.02f;
         }
     }
 }

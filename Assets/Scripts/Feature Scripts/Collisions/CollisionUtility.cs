@@ -23,7 +23,7 @@ namespace Assets.Scripts
         public (PixelMovement, float) DetectCollision(Vector3 newPosition)
         {
             var playerPos = new Vector2(ClassManager.MainScript.mainTexture.width / 2 - newPosition.x, ClassManager.MainScript.mainTexture.height / 2 - newPosition.y);
-            var pixels = ClassManager.MapReadService.GetFromTexture(playerPos, new Vector2Int(2, 4));
+            var pixels = ClassManager.MapReadService.GetFromTexture(playerPos + new Vector2(0.5f, 1), new Vector2Int(2, 4));
             collisionArray = ToMovement(pixels);
         
             return (collisionArray.Max(), collisionArray.Count(c => c == PixelMovement.LIQUID) / 8f);
@@ -40,6 +40,7 @@ namespace Assets.Scripts
             if (Near(p.a, 1) && Near(p.g, 0.6f) && Near(p.b, 0.6f)) return PixelMovement.EMPTY;//belts
             if (Near(p.a, 1) && Near(p.g, 0.1f) && Near(p.b, 0.1f)) return PixelMovement.EMPTY;//shop
             if (Near(p.a, 1) && Near(p.g, 0.5f) && Near(p.b, 0.5f)) return PixelMovement.EMPTY;//mined
+            if (Near(p.a, 1) && Near(p.b, 0.9f)) return PixelMovement.EMPTY;//crafts
             if (Near(p.a, 1) && Near(p.g, 0.5f) && Near(p.b, 0.2f)) return PixelMovement.EMPTY;//tree trunk
             if (Near(p.a, 1) && Near(p.g, 0.6f) && Near(p.b, 0.2f)) return PixelMovement.EMPTY;//tree leaves
             if (Near(p.a, 1) && Near(p.r, 0.1f) && Near(p.g, 0.3f) && Near(p.b, 0.3f)) return PixelMovement.EMPTY;//torch

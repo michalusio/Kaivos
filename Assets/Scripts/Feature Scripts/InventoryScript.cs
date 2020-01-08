@@ -25,16 +25,16 @@ public partial class InventoryScript : OrderedMonoBehaviour
         set
         {
             if (BlockSlots == null) return;
-            foreach(var tab in BlockSlots)
-            {
-                foreach(var img in tab)
-                {
-                    img.color = Color.gray;
-                }
-            }
             
             if (value.Tab >= 0 && BlockSlots.Length > value.Tab && BlockSlots[value.Tab].Length > value.Slot && BlockSlots[value.Tab][value.Slot].enabled)
             {
+                foreach(var tab in BlockSlots)
+                {
+                    foreach(var img in tab)
+                    {
+                        img.color = Color.gray;
+                    }
+                }
                 BlockSlots[value.Tab][value.Slot].color = Color.white;
                 chosenSlot = value;
             }
@@ -69,7 +69,7 @@ public partial class InventoryScript : OrderedMonoBehaviour
         {
             BlockSlots[i] = new RawImageMult
             {
-                levelArray = ClassManager.InventoryPanel.Panels[i].GetComponentsInChildren<RawImage>()
+                levelArray = ClassManager.InventoryPanel.Panels[i].GetComponentsInChildren<RawImage>(true)
             };
         }
 
@@ -78,7 +78,7 @@ public partial class InventoryScript : OrderedMonoBehaviour
         {
             BlockSlotAmounts[i] = new TextMult
             {
-                levelArray = ClassManager.InventoryPanel.Panels[i].GetComponentsInChildren<Text>()
+                levelArray = ClassManager.InventoryPanel.Panels[i].GetComponentsInChildren<Text>(true)
             };
         }
 
@@ -96,6 +96,12 @@ public partial class InventoryScript : OrderedMonoBehaviour
             for(int i = 0; i < Mathf.Min(BlockAmounts.Length, saveState.BlockAmounts.Length); i++)
             {
                 BlockAmounts[i] = saveState.BlockAmounts[i];
+            }
+
+            var upgradeScripts = ClassManager.InventoryPanel.transform.parent.gameObject.GetComponentsInChildren<UpgradeObjectScript>(true);
+            foreach(var script in upgradeScripts)
+            {
+                script.LoadSave();
             }
         }
         else
@@ -194,12 +200,17 @@ public partial class InventoryScript : OrderedMonoBehaviour
 
     public SaveStateStats GetSaveState()
     {
+        var upgradeScripts = ClassManager.InventoryPanel.transform.parent.gameObject.GetComponentsInChildren<UpgradeObjectScript>(true);
+        var enumeration = Enumerable.Range(0, 10);
+        var upgradeArray = enumeration.Select(i => upgradeScripts.FirstOrDefault(u => ((int)u.CurrentUpgradeType) == i)?.CurrentCell ?? 0).ToArray();
+        Debug.Log("Upgrade scripts: " + upgradeScripts.Length);
         return new SaveStateStats
         {
             Money = Money.GetAmount(),
             BlockAmounts = BlockAmounts,
             Position = transform.position,
-            Seed = ClassManager.MainScript.Seed
+            Seed = ClassManager.MainScript.Seed,
+            Upgrades = upgradeArray
         };
     }
 }

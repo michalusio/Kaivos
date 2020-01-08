@@ -26,6 +26,42 @@ void Particles(uint3 id : SV_DispatchThreadID)
 	}
 }
 
+#pragma kernel Overall
+[numthreads(16, 16, 1)]
+void Overall(uint3 id : SV_DispatchThreadID)
+{
+	if (IS_EQUAL(NewFrame[id.xy], TREE_LEAVES))
+	{
+		if ((!IS_EQUAL(NewFrame[id.xy + eee.xy], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.yx], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.xx], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.xz], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.zx], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.zy], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.yz], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.zz], TREE_TRUNK)))
+		{
+			if (snoise(float3(id.xy * 0.05, Time)) > 0.25)
+			{
+				NewFrame[id.xy] = 0;
+			}
+		}
+	}
+	if (IS_EQUAL(NewFrame[id.xy], TREE_TRUNK))
+	{
+		if ((!IS_EQUAL(NewFrame[id.xy + eee.xz], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.yz], TREE_TRUNK)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.yz], GRASS)) &&
+			(!IS_EQUAL(NewFrame[id.xy + eee.zz], TREE_TRUNK)))
+		{
+			if (snoise(float3(id.xy * 0.05, Time)) > 0.5)
+			{
+				NewFrame[id.xy] = 0;
+			}
+		}
+	}
+}
+
 #pragma kernel Treenemy
 [numthreads(16, 16, 1)]
 void Treenemy(uint3 id : SV_DispatchThreadID)
